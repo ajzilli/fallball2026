@@ -83,7 +83,7 @@
       background: #fff;
       font-size: 0.8rem;
     }
-    .manual-set { background: #eff6ff; font-weight: 600; }
+    .manual-set { background: #eff6ff; font-weight: 700; border-color: #3b82f6; }
     .violation-pill {
       display: inline-block;
       padding: 0.2rem 0.5rem;
@@ -102,14 +102,23 @@
       font-size: 0.75rem;
       font-weight: 600;
     }
-    .rule-box {
+    .roster-tag {
+      background: #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 6px;
       font-size: 0.85rem;
-      line-height: 1.4;
-      background: #f8fafc;
-      border-left: 4px solid var(--primary);
-      padding: 0.75rem;
-      margin-bottom: 1rem;
+      font-weight: 600;
+      cursor: grab;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #cbd5e1;
+      touch-action: none;
     }
+    .roster-tag:active { cursor: grabbing; }
+    .roster-tag.dragging { opacity: 0.4; border: 2px dashed #0284c7; }
+    .roster-tag.over { border: 2px solid #2563eb; background: #dbeafe; }
     @media print {
       body { background: white; padding: 0; }
       button, .no-print { display: none !important; }
@@ -135,12 +144,12 @@
   </header>
 
   <div class="card no-print">
-    <strong>Roster Batting Order</strong> (Drag or edit names to adjust fixed batting order):
-    <div id="rosterList" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+    <strong>Batting Order (Drag & Drop to reorder):</strong>
+    <div id="rosterList" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Fielding Grid (Select to pin, then Auto-Fill)</h3>
+    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Fielding Grid (Lock dropdowns as needed, then Auto-Fill)</h3>
     <table class="grid-table" id="rotationTable">
       <thead>
         <tr>
@@ -180,7 +189,7 @@
   </div>
 
   <script>
-    const INITIAL_ROSTER = [
+    let roster = [
       "Beckett", "Cash", "Jack B", "Max", "Dean", 
       "Arlo", "Jack N", "Ashton", "William", "Zachary"
     ];
@@ -199,8 +208,6 @@
     ];
 
     const INNINGS = 6;
-    let roster = [...INITIAL_ROSTER];
-    // rotationState[inningIndex][posKey] = { player: "", manual: false }
     let rotationState = [];
 
     function init() {
@@ -208,7 +215,6 @@
       for (let i = 0; i < INNINGS; i++) {
         const inn = {};
         POSITIONS.forEach(p => inn[p.key] = { player: "", manual: false });
-        inn["BENCH"] = [];
         rotationState.push(inn);
       }
       renderRosterBadges();
@@ -216,13 +222,56 @@
       updateAudit();
     }
 
+    // --- Drag and Drop Batting Order ---
+    let draggedIdx = null;
+
     function renderRosterBadges() {
       const container = document.getElementById("rosterList");
       container.innerHTML = "";
       roster.forEach((name, idx) => {
-        const badge = document.createElement("span");
-        badge.style.cssText = "background:#e2e8f0; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:600;";
-        badge.innerText = `${idx + 1}. ${name}`;
+        const badge = document.createElement("div");
+        badge.className = "roster-tag";
+        badge.draggable = true;
+        badge.dataset.index = idx;
+        badge.innerHTML = `<span style="color:#64748b; font-size:0.75rem;">#${idx + 1}</span> ${name}`;
+
+        badge.addEventListener("dragstart", (e) => {
+          draggedIdx = idx;
+          e.dataTransfer.effectAllowed = "move";
+          badge.classList.add("dragging");
+        });
+
+        badge.addEventListener("dragend", () => {
+          badge.classList.remove("dragging");
+          document.querySelectorAll(".roster-tag").forEach(el => el.classList.remove("over"));
+        });
+
+        badge.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        });
+
+        badge.addEventListener("dragenter", () => {
+          if (draggedIdx !== idx) badge.classList.add("over");
+        });
+
+        badge.addEventListener("dragleave", () => {
+          badge.classList.remove("over");
+        });
+
+        badge.addEventListener("drop", (e) => {
+          e.preventDefault();
+          badge.classList.remove("over");
+          if (draggedIdx === null || draggedIdx === idx) return;
+
+          const movedItem = roster.splice(draggedIdx, 1)[0];
+          roster.splice(idx, 0, movedItem);
+          draggedIdx = null;
+          renderRosterBadges();
+          renderGrid();
+          updateAudit();
+        });
+
         container.appendChild(badge);
       });
     }
@@ -241,7 +290,9 @@
         POSITIONS.forEach(pos => {
           const td = document.createElement("td");
           const select = document.createElement("select");
-          select.className = rotationState[inn][pos.key].manual ? "manual-set" : "";
+          if (rotationState[inn][pos.key].manual) {
+            select.classList.add("manual-set");
+          }
 
           const optDefault = document.createElement("option");
           optDefault.value = "";
@@ -263,7 +314,6 @@
             if (val === "") {
               rotationState[inn][pos.key] = { player: "", manual: false };
             } else {
-              // Ensure player isn't assigned twice in same inning
               POSITIONS.forEach(p => {
                 if (p.key !== pos.key && rotationState[inn][p.key].player === val) {
                   rotationState[inn][p.key] = { player: "", manual: false };
@@ -279,10 +329,8 @@
           tr.appendChild(td);
         });
 
-        // Calculate Bench for display
         const assignedThisInn = POSITIONS.map(p => rotationState[inn][p.key].player).filter(Boolean);
         const benchPlayers = roster.filter(p => !assignedThisInn.includes(p));
-        rotationState[inn]["BENCH"] = benchPlayers;
 
         const tdBench = document.createElement("td");
         tdBench.style.fontWeight = "bold";
@@ -327,7 +375,7 @@
         const overusedPos = Object.entries(posCounts)
           .filter(([key, count]) => {
             const p = POSITIONS.find(pos => pos.key === key);
-            return p.type === "IF" && count > 2;
+            return p && p.type === "IF" && count > 2;
           })
           .map(([key, count]) => `${key}: ${count}x`);
 
@@ -352,119 +400,80 @@
       });
     }
 
-    // Constraint-satisfaction backtracking solver for unassigned slots
+    // --- Fast Iterative Solver (No Freezing) ---
     function autoFillRemaining() {
-      const state = JSON.parse(JSON.stringify(rotationState));
+      const IF_KEYS = POSITIONS.filter(p => p.type === "IF").map(p => p.key);
+      const OF_KEYS = POSITIONS.filter(p => p.type === "OF").map(p => p.key);
 
-      function isValid(innIdx, posKey, player, currentPlan) {
-        const isIF = POSITIONS.find(p => p.key === posKey).type === "IF";
-        
-        let ifCount = 0;
-        let earlyIfCount = 0;
-        let samePosCount = 0;
+      // Attempt greedy randomized filling with restarts
+      const MAX_ATTEMPTS = 500;
+      let solved = false;
+      let bestState = null;
 
-        for (let i = 0; i < INNINGS; i++) {
-          for (let p of POSITIONS) {
-            if (currentPlan[i][p.key].player === player) {
-              if (p.type === "IF") {
-                ifCount++;
-                if (i < 4) earlyIfCount++;
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        const candidate = JSON.parse(JSON.stringify(rotationState));
+        let validAttempt = true;
+
+        // Player trackers
+        const ifCounts = {};
+        const earlyIfCounts = {};
+        const posUsage = {};
+
+        roster.forEach(p => {
+          ifCounts[p] = 0;
+          earlyIfCounts[p] = 0;
+          posUsage[p] = {};
+          POSITIONS.forEach(pos => posUsage[p][pos.key] = 0);
+        });
+
+        // Initialize trackers with manual assignments
+        for (let inn = 0; inn < INNINGS; inn++) {
+          for (let pos of POSITIONS) {
+            const player = candidate[inn][pos.key].player;
+            if (player) {
+              posUsage[player][pos.key]++;
+              if (pos.type === "IF") {
+                ifCounts[player]++;
+                if (inn < 4) earlyIfCounts[player]++;
               }
-              if (p.key === posKey) samePosCount++;
             }
           }
         }
 
-        if (isIF && samePosCount >= 2) return false;
-        return true;
-      }
+        // Fill inning by inning
+        for (let inn = 0; inn < INNINGS; inn++) {
+          const assignedThisInn = new Set(
+            POSITIONS.map(p => candidate[inn][p.key].player).filter(Boolean)
+          );
 
-      function solve(innIdx, posIdx) {
-        if (innIdx === INNINGS) {
-          // Final check on all inning invariants
-          for (let player of roster) {
-            let totalIF = 0;
-            let earlyIF = 0;
-            let bench = 0;
-            for (let i = 0; i < INNINGS; i++) {
-              let pFound = false;
-              for (let p of POSITIONS) {
-                if (state[i][p.key].player === player) {
-                  pFound = true;
-                  if (p.type === "IF") {
-                    totalIF++;
-                    if (i < 4) earlyIF++;
-                  }
-                }
-              }
-              if (!pFound) bench++;
-            }
-            if (totalIF < 3 || earlyIF < 2 || bench > 2) return false;
-          }
-          return true;
-        }
+          // Positions needing assignment this inning
+          const openPositions = POSITIONS.filter(p => !candidate[inn][p.key].player);
+          // Sort infield positions first to satisfy the stricter IF requirements
+          openPositions.sort((a, b) => (a.type === "IF" ? -1 : 1));
 
-        if (posIdx === POSITIONS.length) {
-          // Check bench balance: Nobody sits twice until all sat once (for 10 players, bench=0/inn)
-          return solve(innIdx + 1, 0);
-        }
+          for (let pos of openPositions) {
+            // Find available eligible players
+            const eligible = roster.filter(player => {
+              if (assignedThisInn.has(player)) return false;
+              if (pos.type === "IF" && posUsage[player][pos.key] >= 2) return false;
+              return true;
+            });
 
-        const pos = POSITIONS[posIdx];
-        if (state[innIdx][pos.key].manual && state[innIdx][pos.key].player !== "") {
-          return solve(innIdx, posIdx + 1);
-        }
-
-        // Shuffle roster to randomize assignments among valid options
-        const candidates = [...roster].sort(() => Math.random() - 0.5);
-
-        for (let cand of candidates) {
-          // Check if already assigned this inning
-          let assigned = false;
-          for (let p of POSITIONS) {
-            if (state[innIdx][p.key].player === cand) {
-              assigned = true; 
+            if (eligible.length === 0) {
+              validAttempt = false;
               break;
             }
-          }
-          if (assigned) continue;
 
-          if (isValid(innIdx, pos.key, cand, state)) {
-            state[innIdx][pos.key] = { player: cand, manual: false };
-            if (solve(innIdx, posIdx + 1)) return true;
-            state[innIdx][pos.key] = { player: "", manual: false };
-          }
-        }
-        return false;
-      }
-
-      if (solve(0, 0)) {
-        rotationState = state;
-        renderGrid();
-        updateAudit();
-      } else {
-        alert("Could not generate a valid configuration with the current pinned manual selections. Try unlocking a few positions.");
-      }
-    }
-
-    function resetToManual() {
-      for (let inn = 0; inn < INNINGS; inn++) {
-        POSITIONS.forEach(p => {
-          if (!rotationState[inn][p.key].manual) {
-            rotationState[inn][p.key] = { player: "", manual: false };
-          }
-        });
-      }
-      renderGrid();
-      updateAudit();
-    }
-
-    function resetAll() {
-      if (confirm("Clear all field assignments?")) {
-        init();
-      }
-    }
-
-    window.onload = init;
-  </script>
-</body>
-</html>
+            // Score candidates based on constraint priority
+            eligible.sort((a, b) => {
+              if (pos.type === "IF") {
+                if (inn < 4) {
+                  // Prioritize players needing early IF
+                  const aNeedEarly = 2 - earlyIfCounts[a];
+                  const bNeedEarly = 2 - earlyIfCounts[b];
+                  if (aNeedEarly !== bNeedEarly) return bNeedEarly - aNeedEarly;
+                }
+                // Then prioritize overall IF need
+                const aNeed = 3 - ifCounts[a];
+                const bNeed = 3 - ifCounts[b];
+                if (aNeed !== b
