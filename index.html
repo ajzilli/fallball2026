@@ -1,486 +1,470 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coach Lineup & Defensive Rotation Manager</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --primary: #1e3a8a;
+      --primary-hover: #1e40af;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --danger-bg: #fee2e2;
+      --danger-border: #ef4444;
+      --danger-text: #991b1b;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 1.5rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
+    .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    button:hover { background: var(--primary-hover); }
+    button.secondary { background: #64748b; }
+    button.secondary:hover { background: #475569; }
+    button.danger { background: #ef4444; }
+    button.danger:hover { background: #dc2626; }
+    .card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow-x: auto;
+      display: block;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.6rem;
+      text-align: center;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    th { background: #f1f5f9; font-weight: 600; }
+    select {
+      width: 100%;
+      padding: 0.25rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 0.8rem;
+    }
+    .manual-set { background: #eff6ff; font-weight: 600; }
+    .violation-pill {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin: 0.15rem;
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+    }
+    .status-ok {
+      background: var(--success-bg);
+      color: var(--success-text);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .rule-box {
+      font-size: 0.85rem;
+      line-height: 1.4;
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      button, .no-print { display: none !important; }
+      .card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }
+      th, td { border: 1px solid #000; padding: 4px; }
+      select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Coach Lineup &amp; Defensive Rotation Manager&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>:root {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--bg: #f8fafc;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--card: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--primary: #1e3a8a;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--primary-hover: #1e40af;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--border: #cbd5e1;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--text: #0f172a;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--text-muted: #64748b;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--danger-bg: #fee2e2;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--danger-border: #ef4444;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--danger-text: #991b1b;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--success-bg: #dcfce7;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--success-text: #166534;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--warning-bg: #fef3c7;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>--warning-text: #92400e;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--bg);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>header {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-bottom: 2px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding-bottom: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.5rem 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.875rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button:hover { background: var(--primary-hover); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button.secondary { background: #64748b; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button.secondary:hover { background: #475569; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button.danger { background: #ef4444; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>button.danger:hover { background: #dc2626; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--card);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 1px 3px rgba(0,0,0,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.grid-table {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-collapse: collapse;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>overflow-x: auto;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>th, td {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.4rem 0.6rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>white-space: nowrap;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>th { background: #f1f5f9; font-weight: 600; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>select {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.25rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--border);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #fff;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.8rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.manual-set { background: #eff6ff; font-weight: 600; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.violation-pill {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display: inline-block;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.2rem 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin: 0.15rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--danger-bg);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--danger-text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border: 1px solid var(--danger-border);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.status-ok {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: var(--success-bg);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>color: var(--success-text);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.2rem 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 4px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.rule-box {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>line-height: 1.4;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background: #f8fafc;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>border-left: 4px solid var(--primary);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.75rem;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin-bottom: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>@media print {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>body { background: white; padding: 0; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>button, .no-print { display: none !important; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>.card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>th, td { border: 1px solid #000; padding: 4px; }</p>
-<p class="p1"><span class="Apple-converted-space">      </span>select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;Coach Lineup &amp; Field Rotation Planner&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;small style="color: var(--text-muted);"&gt;6-Inning rotation validator &amp; optimizer&lt;/small&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="btn-group no-print"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="autoFillRemaining()"&gt;Auto-Fill Open Positions&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="secondary" onclick="resetToManual()"&gt;Clear Unlocked&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="danger" onclick="resetAll()"&gt;Reset All&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="window.print()"&gt;Print Lineup Sheet&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card no-print"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;strong&gt;Roster Batting Order&lt;/strong&gt; (Drag or edit names to adjust fixed batting order):</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="rosterList" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3 style="margin-top: 0; margin-bottom: 0.5rem;"&gt;Fielding Grid (Select to pin, then Auto-Fill)&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;table class="grid-table" id="rotationTable"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;thead&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Inning&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Pitcher (P)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Catcher (C)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;1st Base (1B)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;2nd Base (2B)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;3rd Base (3B)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Shortstop (SS)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Left Field (LF)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Left Center (LC)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Right Center (RC)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Right Field (RF)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Bench (Sit)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tr&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/thead&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;tbody id="rotationBody"&gt;&lt;/tbody&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/table&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3 style="margin-top: 0; margin-bottom: 0.5rem;"&gt;Rule Compliance &amp; Playing Time Tracker&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;table class="grid-table" style="width: 100%;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;thead&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Player&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Total Infield&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Infield (Inn 1-4)&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Total Bench&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Position Repeats&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;th&gt;Status&lt;/th&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tr&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/thead&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;tbody id="auditBody"&gt;&lt;/tbody&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/table&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const INITIAL_ROSTER = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Beckett", "Cash", "Jack B", "Max", "Dean",<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>"Arlo", "Jack N", "Ashton", "William", "Zachary"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const POSITIONS = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "P", label: "Pitcher", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "C", label: "Catcher", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "1B", label: "1st Base", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "2B", label: "2nd Base", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "3B", label: "3rd Base", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "SS", label: "Shortstop", type: "IF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "LF", label: "Left Field", type: "OF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "LC", label: "Left Center", type: "OF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "RC", label: "Right Center", type: "OF" },</p>
-<p class="p1"><span class="Apple-converted-space">      </span>{ key: "RF", label: "Right Field", type: "OF" }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const INNINGS = 6;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let roster = [...INITIAL_ROSTER];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// rotationState[inningIndex][posKey] = { player: "", manual: false }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let rotationState = [];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function init() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>rotationState = [];</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (let i = 0; i &lt; INNINGS; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const inn = {};</p>
-<p class="p1"><span class="Apple-converted-space">        </span>POSITIONS.forEach(p =&gt; inn[p.key] = { player: "", manual: false });</p>
-<p class="p1"><span class="Apple-converted-space">        </span>inn["BENCH"] = [];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>rotationState.push(inn);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>renderRosterBadges();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>renderGrid();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>updateAudit();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function renderRosterBadges() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const container = document.getElementById("rosterList");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = "";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>roster.forEach((name, idx) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const badge = document.createElement("span");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>badge.style.cssText = "background:#e2e8f0; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:600;";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>badge.innerText = `${idx + 1}. ${name}`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>container.appendChild(badge);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function renderGrid() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const tbody = document.getElementById("rotationBody");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tbody.innerHTML = "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (let inn = 0; inn &lt; INNINGS; inn++) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const tr = document.createElement("tr");</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const tdInn = document.createElement("td");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tdInn.innerHTML = `&lt;strong&gt;Inning ${inn + 1}&lt;/strong&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tr.appendChild(tdInn);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>POSITIONS.forEach(pos =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const td = document.createElement("td");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const select = document.createElement("select");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>select.className = rotationState[inn][pos.key].manual ? "manual-set" : "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>const optDefault = document.createElement("option");</p>
-<p class="p1"><span class="Apple-converted-space">          </span>optDefault.value = "";</p>
-<p class="p1"><span class="Apple-converted-space">          </span>optDefault.innerText = "-- Open --";</p>
-<p class="p1"><span class="Apple-converted-space">          </span>select.appendChild(optDefault);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>roster.forEach(player =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const opt = document.createElement("option");</p>
-<p class="p1"><span class="Apple-converted-space">            </span>opt.value = player;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>opt.innerText = player;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (rotationState[inn][pos.key].player === player) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>opt.selected = true;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>select.appendChild(opt);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>select.onchange = (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const val = e.target.value;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (val === "") {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>rotationState[inn][pos.key] = { player: "", manual: false };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>// Ensure player isn't assigned twice in same inning</p>
-<p class="p1"><span class="Apple-converted-space">              </span>POSITIONS.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (p.key !== pos.key &amp;&amp; rotationState[inn][p.key].player === val) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>rotationState[inn][p.key] = { player: "", manual: false };</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>});</p>
-<p class="p1"><span class="Apple-converted-space">              </span>rotationState[inn][pos.key] = { player: val, manual: true };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>renderGrid();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>updateAudit();</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>td.appendChild(select);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>tr.appendChild(td);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Calculate Bench for display</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const assignedThisInn = POSITIONS.map(p =&gt; rotationState[inn][p.key].player).filter(Boolean);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const benchPlayers = roster.filter(p =&gt; !assignedThisInn.includes(p));</p>
-<p class="p1"><span class="Apple-converted-space">        </span>rotationState[inn]["BENCH"] = benchPlayers;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const tdBench = document.createElement("td");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tdBench.style.fontWeight = "bold";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tdBench.style.color = benchPlayers.length &gt; 0 ? "var(--warning-text)" : "var(--text-muted)";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tdBench.innerText = benchPlayers.length &gt; 0 ? benchPlayers.join(", ") : "None";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tr.appendChild(tdBench);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>tbody.appendChild(tr);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function updateAudit() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const tbody = document.getElementById("auditBody");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>tbody.innerHTML = "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>roster.forEach(player =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let totalIF = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let earlyIF = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let totalBench = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const posCounts = {};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>for (let inn = 0; inn &lt; INNINGS; inn++) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>let played = false;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>POSITIONS.forEach(pos =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (rotationState[inn][pos.key].player === player) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>played = true;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>posCounts[pos.key] = (posCounts[pos.key] || 0) + 1;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (pos.type === "IF") {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>totalIF++;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (inn &lt; 4) earlyIF++;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>});</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (!played) totalBench++;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const violations = [];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (totalIF &lt; 3) violations.push(`Need ${3 - totalIF} more IF`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (earlyIF &lt; 2) violations.push(`Need ${2 - earlyIF} more IF (Inn 1-4)`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (totalBench &gt; 2) violations.push(`Bench limit exceeded (${totalBench}/2)`);</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const overusedPos = Object.entries(posCounts)</p>
-<p class="p1"><span class="Apple-converted-space">          </span>.filter(([key, count]) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const p = POSITIONS.find(pos =&gt; pos.key === key);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return p.type === "IF" &amp;&amp; count &gt; 2;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>})</p>
-<p class="p1"><span class="Apple-converted-space">          </span>.map(([key, count]) =&gt; `${key}: ${count}x`);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (overusedPos.length &gt; 0) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>violations.push(`IF duplicate: ${overusedPos.join(", ")}`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const tr = document.createElement("tr");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tr.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;&lt;strong&gt;${player}&lt;/strong&gt;&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${totalIF} / 3 min&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${earlyIF} / 2 min&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${totalBench} / 2 max&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;${Object.entries(posCounts).map(([k, c]) =&gt; `${k}:${c}`).join(" ") || "-"}&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>${violations.length === 0<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">              </span>? `&lt;span class="status-ok"&gt;Compliant&lt;/span&gt;`<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">              </span>: violations.map(v =&gt; `&lt;span class="violation-pill"&gt;${v}&lt;/span&gt;`).join("")}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>&lt;/td&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tbody.appendChild(tr);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Constraint-satisfaction backtracking solver for unassigned slots</p>
-<p class="p1"><span class="Apple-converted-space">    </span>function autoFillRemaining() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const state = JSON.parse(JSON.stringify(rotationState));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>function isValid(innIdx, posKey, player, currentPlan) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const isIF = POSITIONS.find(p =&gt; p.key === posKey).type === "IF";</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>let ifCount = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let earlyIfCount = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let samePosCount = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>for (let i = 0; i &lt; INNINGS; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>for (let p of POSITIONS) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (currentPlan[i][p.key].player === player) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (p.type === "IF") {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ifCount++;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (i &lt; 4) earlyIfCount++;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (p.key === posKey) samePosCount++;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (isIF &amp;&amp; samePosCount &gt;= 2) return false;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>function solve(innIdx, posIdx) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (innIdx === INNINGS) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>// Final check on all inning invariants</p>
-<p class="p1"><span class="Apple-converted-space">          </span>for (let player of roster) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let totalIF = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let earlyIF = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let bench = 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; INNINGS; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>let pFound = false;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>for (let p of POSITIONS) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (state[i][p.key].player === player) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>pFound = true;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>if (p.type === "IF") {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>totalIF++;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (i &lt; 4) earlyIF++;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (!pFound) bench++;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (totalIF &lt; 3 || earlyIF &lt; 2 || bench &gt; 2) return false;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (posIdx === POSITIONS.length) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>// Check bench balance: Nobody sits twice until all sat once (for 10 players, bench=0/inn)</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return solve(innIdx + 1, 0);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pos = POSITIONS[posIdx];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (state[innIdx][pos.key].manual &amp;&amp; state[innIdx][pos.key].player !== "") {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>return solve(innIdx, posIdx + 1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>// Shuffle roster to randomize assignments among valid options</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const candidates = [...roster].sort(() =&gt; Math.random() - 0.5);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>for (let cand of candidates) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>// Check if already assigned this inning</p>
-<p class="p1"><span class="Apple-converted-space">          </span>let assigned = false;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>for (let p of POSITIONS) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (state[innIdx][p.key].player === cand) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>assigned = true;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">              </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (assigned) continue;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (isValid(innIdx, pos.key, cand, state)) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>state[innIdx][pos.key] = { player: cand, manual: false };</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (solve(innIdx, posIdx + 1)) return true;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>state[innIdx][pos.key] = { player: "", manual: false };</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>return false;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (solve(0, 0)) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>rotationState = state;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>renderGrid();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateAudit();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Could not generate a valid configuration with the current pinned manual selections. Try unlocking a few positions.");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function resetToManual() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (let inn = 0; inn &lt; INNINGS; inn++) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>POSITIONS.forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>if (!rotationState[inn][p.key].manual) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>rotationState[inn][p.key] = { player: "", manual: false };</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>renderGrid();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>updateAudit();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function resetAll() {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (confirm("Clear all field assignments?")) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>init();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.onload = init;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+  <header>
+    <div>
+      <h1>Coach Lineup & Field Rotation Planner</h1>
+      <small style="color: var(--text-muted);">6-Inning rotation validator & optimizer</small>
+    </div>
+    <div class="btn-group no-print">
+      <button onclick="autoFillRemaining()">Auto-Fill Open Positions</button>
+      <button class="secondary" onclick="resetToManual()">Clear Unlocked</button>
+      <button class="danger" onclick="resetAll()">Reset All</button>
+      <button onclick="window.print()">Print Lineup Sheet</button>
+    </div>
+  </header>
+
+  <div class="card no-print">
+    <strong>Roster Batting Order</strong> (Drag or edit names to adjust fixed batting order):
+    <div id="rosterList" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Fielding Grid (Select to pin, then Auto-Fill)</h3>
+    <table class="grid-table" id="rotationTable">
+      <thead>
+        <tr>
+          <th>Inning</th>
+          <th>Pitcher (P)</th>
+          <th>Catcher (C)</th>
+          <th>1st Base (1B)</th>
+          <th>2nd Base (2B)</th>
+          <th>3rd Base (3B)</th>
+          <th>Shortstop (SS)</th>
+          <th>Left Field (LF)</th>
+          <th>Left Center (LC)</th>
+          <th>Right Center (RC)</th>
+          <th>Right Field (RF)</th>
+          <th>Bench (Sit)</th>
+        </tr>
+      </thead>
+      <tbody id="rotationBody"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Rule Compliance & Playing Time Tracker</h3>
+    <table class="grid-table" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Total Infield</th>
+          <th>Infield (Inn 1-4)</th>
+          <th>Total Bench</th>
+          <th>Position Repeats</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="auditBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const INITIAL_ROSTER = [
+      "Beckett", "Cash", "Jack B", "Max", "Dean", 
+      "Arlo", "Jack N", "Ashton", "William", "Zachary"
+    ];
+
+    const POSITIONS = [
+      { key: "P", label: "Pitcher", type: "IF" },
+      { key: "C", label: "Catcher", type: "IF" },
+      { key: "1B", label: "1st Base", type: "IF" },
+      { key: "2B", label: "2nd Base", type: "IF" },
+      { key: "3B", label: "3rd Base", type: "IF" },
+      { key: "SS", label: "Shortstop", type: "IF" },
+      { key: "LF", label: "Left Field", type: "OF" },
+      { key: "LC", label: "Left Center", type: "OF" },
+      { key: "RC", label: "Right Center", type: "OF" },
+      { key: "RF", label: "Right Field", type: "OF" }
+    ];
+
+    const INNINGS = 6;
+    let roster = [...INITIAL_ROSTER];
+    // rotationState[inningIndex][posKey] = { player: "", manual: false }
+    let rotationState = [];
+
+    function init() {
+      rotationState = [];
+      for (let i = 0; i < INNINGS; i++) {
+        const inn = {};
+        POSITIONS.forEach(p => inn[p.key] = { player: "", manual: false });
+        inn["BENCH"] = [];
+        rotationState.push(inn);
+      }
+      renderRosterBadges();
+      renderGrid();
+      updateAudit();
+    }
+
+    function renderRosterBadges() {
+      const container = document.getElementById("rosterList");
+      container.innerHTML = "";
+      roster.forEach((name, idx) => {
+        const badge = document.createElement("span");
+        badge.style.cssText = "background:#e2e8f0; padding:4px 8px; border-radius:4px; font-size:0.8rem; font-weight:600;";
+        badge.innerText = `${idx + 1}. ${name}`;
+        container.appendChild(badge);
+      });
+    }
+
+    function renderGrid() {
+      const tbody = document.getElementById("rotationBody");
+      tbody.innerHTML = "";
+
+      for (let inn = 0; inn < INNINGS; inn++) {
+        const tr = document.createElement("tr");
+        
+        const tdInn = document.createElement("td");
+        tdInn.innerHTML = `<strong>Inning ${inn + 1}</strong>`;
+        tr.appendChild(tdInn);
+
+        POSITIONS.forEach(pos => {
+          const td = document.createElement("td");
+          const select = document.createElement("select");
+          select.className = rotationState[inn][pos.key].manual ? "manual-set" : "";
+
+          const optDefault = document.createElement("option");
+          optDefault.value = "";
+          optDefault.innerText = "-- Open --";
+          select.appendChild(optDefault);
+
+          roster.forEach(player => {
+            const opt = document.createElement("option");
+            opt.value = player;
+            opt.innerText = player;
+            if (rotationState[inn][pos.key].player === player) {
+              opt.selected = true;
+            }
+            select.appendChild(opt);
+          });
+
+          select.onchange = (e) => {
+            const val = e.target.value;
+            if (val === "") {
+              rotationState[inn][pos.key] = { player: "", manual: false };
+            } else {
+              // Ensure player isn't assigned twice in same inning
+              POSITIONS.forEach(p => {
+                if (p.key !== pos.key && rotationState[inn][p.key].player === val) {
+                  rotationState[inn][p.key] = { player: "", manual: false };
+                }
+              });
+              rotationState[inn][pos.key] = { player: val, manual: true };
+            }
+            renderGrid();
+            updateAudit();
+          };
+
+          td.appendChild(select);
+          tr.appendChild(td);
+        });
+
+        // Calculate Bench for display
+        const assignedThisInn = POSITIONS.map(p => rotationState[inn][p.key].player).filter(Boolean);
+        const benchPlayers = roster.filter(p => !assignedThisInn.includes(p));
+        rotationState[inn]["BENCH"] = benchPlayers;
+
+        const tdBench = document.createElement("td");
+        tdBench.style.fontWeight = "bold";
+        tdBench.style.color = benchPlayers.length > 0 ? "var(--warning-text)" : "var(--text-muted)";
+        tdBench.innerText = benchPlayers.length > 0 ? benchPlayers.join(", ") : "None";
+        tr.appendChild(tdBench);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    function updateAudit() {
+      const tbody = document.getElementById("auditBody");
+      tbody.innerHTML = "";
+
+      roster.forEach(player => {
+        let totalIF = 0;
+        let earlyIF = 0;
+        let totalBench = 0;
+        const posCounts = {};
+
+        for (let inn = 0; inn < INNINGS; inn++) {
+          let played = false;
+          POSITIONS.forEach(pos => {
+            if (rotationState[inn][pos.key].player === player) {
+              played = true;
+              posCounts[pos.key] = (posCounts[pos.key] || 0) + 1;
+              if (pos.type === "IF") {
+                totalIF++;
+                if (inn < 4) earlyIF++;
+              }
+            }
+          });
+          if (!played) totalBench++;
+        }
+
+        const violations = [];
+        if (totalIF < 3) violations.push(`Need ${3 - totalIF} more IF`);
+        if (earlyIF < 2) violations.push(`Need ${2 - earlyIF} more IF (Inn 1-4)`);
+        if (totalBench > 2) violations.push(`Bench limit exceeded (${totalBench}/2)`);
+        
+        const overusedPos = Object.entries(posCounts)
+          .filter(([key, count]) => {
+            const p = POSITIONS.find(pos => pos.key === key);
+            return p.type === "IF" && count > 2;
+          })
+          .map(([key, count]) => `${key}: ${count}x`);
+
+        if (overusedPos.length > 0) {
+          violations.push(`IF duplicate: ${overusedPos.join(", ")}`);
+        }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${player}</strong></td>
+          <td>${totalIF} / 3 min</td>
+          <td>${earlyIF} / 2 min</td>
+          <td>${totalBench} / 2 max</td>
+          <td>${Object.entries(posCounts).map(([k, c]) => `${k}:${c}`).join(" ") || "-"}</td>
+          <td>
+            ${violations.length === 0 
+              ? `<span class="status-ok">Compliant</span>` 
+              : violations.map(v => `<span class="violation-pill">${v}</span>`).join("")}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Constraint-satisfaction backtracking solver for unassigned slots
+    function autoFillRemaining() {
+      const state = JSON.parse(JSON.stringify(rotationState));
+
+      function isValid(innIdx, posKey, player, currentPlan) {
+        const isIF = POSITIONS.find(p => p.key === posKey).type === "IF";
+        
+        let ifCount = 0;
+        let earlyIfCount = 0;
+        let samePosCount = 0;
+
+        for (let i = 0; i < INNINGS; i++) {
+          for (let p of POSITIONS) {
+            if (currentPlan[i][p.key].player === player) {
+              if (p.type === "IF") {
+                ifCount++;
+                if (i < 4) earlyIfCount++;
+              }
+              if (p.key === posKey) samePosCount++;
+            }
+          }
+        }
+
+        if (isIF && samePosCount >= 2) return false;
+        return true;
+      }
+
+      function solve(innIdx, posIdx) {
+        if (innIdx === INNINGS) {
+          // Final check on all inning invariants
+          for (let player of roster) {
+            let totalIF = 0;
+            let earlyIF = 0;
+            let bench = 0;
+            for (let i = 0; i < INNINGS; i++) {
+              let pFound = false;
+              for (let p of POSITIONS) {
+                if (state[i][p.key].player === player) {
+                  pFound = true;
+                  if (p.type === "IF") {
+                    totalIF++;
+                    if (i < 4) earlyIF++;
+                  }
+                }
+              }
+              if (!pFound) bench++;
+            }
+            if (totalIF < 3 || earlyIF < 2 || bench > 2) return false;
+          }
+          return true;
+        }
+
+        if (posIdx === POSITIONS.length) {
+          // Check bench balance: Nobody sits twice until all sat once (for 10 players, bench=0/inn)
+          return solve(innIdx + 1, 0);
+        }
+
+        const pos = POSITIONS[posIdx];
+        if (state[innIdx][pos.key].manual && state[innIdx][pos.key].player !== "") {
+          return solve(innIdx, posIdx + 1);
+        }
+
+        // Shuffle roster to randomize assignments among valid options
+        const candidates = [...roster].sort(() => Math.random() - 0.5);
+
+        for (let cand of candidates) {
+          // Check if already assigned this inning
+          let assigned = false;
+          for (let p of POSITIONS) {
+            if (state[innIdx][p.key].player === cand) {
+              assigned = true; 
+              break;
+            }
+          }
+          if (assigned) continue;
+
+          if (isValid(innIdx, pos.key, cand, state)) {
+            state[innIdx][pos.key] = { player: cand, manual: false };
+            if (solve(innIdx, posIdx + 1)) return true;
+            state[innIdx][pos.key] = { player: "", manual: false };
+          }
+        }
+        return false;
+      }
+
+      if (solve(0, 0)) {
+        rotationState = state;
+        renderGrid();
+        updateAudit();
+      } else {
+        alert("Could not generate a valid configuration with the current pinned manual selections. Try unlocking a few positions.");
+      }
+    }
+
+    function resetToManual() {
+      for (let inn = 0; inn < INNINGS; inn++) {
+        POSITIONS.forEach(p => {
+          if (!rotationState[inn][p.key].manual) {
+            rotationState[inn][p.key] = { player: "", manual: false };
+          }
+        });
+      }
+      renderGrid();
+      updateAudit();
+    }
+
+    function resetAll() {
+      if (confirm("Clear all field assignments?")) {
+        init();
+      }
+    }
+
+    window.onload = init;
+  </script>
 </body>
 </html>
