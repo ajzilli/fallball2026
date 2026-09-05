@@ -125,6 +125,18 @@
     .roster-tag:active { cursor: grabbing; }
     .roster-tag.dragging { opacity: 0.4; }
     .roster-tag.over { background: #bfdbfe; border-color: #2563eb; }
+    .absent-tag {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid var(--danger-border);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
     .move-btn {
       background: none;
       border: none;
@@ -135,9 +147,31 @@
       line-height: 1;
     }
     .move-btn:hover { color: var(--primary); }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      padding: 0 2px 0 4px;
+      font-size: 0.95rem;
+      line-height: 1;
+      font-weight: bold;
+    }
+    .remove-btn:hover { color: #991b1b; }
+    .add-back-btn {
+      background: #ffffff;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .add-back-btn:hover { background: #fee2e2; }
     @media print {
       body { background: white; padding: 0; }
-      button, .no-print, .move-btn { display: none !important; }
+      button, .no-print, .move-btn, .remove-btn, .add-back-btn { display: none !important; }
       .card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }
       th, td { border: 1px solid #000; padding: 4px; }
       select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }
@@ -160,8 +194,20 @@
   </header>
 
   <div class="card no-print">
-    <strong>Batting Order:</strong> <span style="font-size: 0.8rem; color: var(--text-muted);">(Drag badges or use arrows to adjust order)</span>
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <div>
+        <strong>Batting Order (<span id="activeCount">10</span> active):</strong>
+        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(Drag badges or use arrows to adjust order; click ✕ if absent)</span>
+      </div>
+    </div>
     <div id="rosterList" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+
+    <div id="absentContainer" style="margin-top: 1.25rem; border-top: 1px dashed var(--border); padding-top: 0.75rem; display: none;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: var(--danger-text); margin-bottom: 0.5rem;">
+        Absent / Not Arrived Yet (<span id="absentCount">0</span>):
+      </div>
+      <div id="absentList" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -214,6 +260,7 @@
       "Beckett", "Cash", "Jack B", "Max", "Dean", 
       "Arlo", "Jack N", "Ashton", "William", "Zachary"
     ];
+    var absentList = [];
 
     var POSITIONS = [
       { key: "P", label: "Pitcher", type: "IF" },
@@ -245,6 +292,35 @@
       updateAudit();
     }
 
+    function removePlayer(idx) {
+      var removed = roster.splice(idx, 1)[0];
+      absentList.push(removed);
+
+      // Scrub removed player from any grid assignments
+      for (var i = 0; i < INNINGS; i++) {
+        for (var p = 0; p < POSITIONS.length; p++) {
+          var k = POSITIONS[p].key;
+          if (rotationState[i][k].player === removed) {
+            rotationState[i][k] = { player: "", manual: false };
+          }
+        }
+      }
+
+      renderRosterBadges();
+      renderGrid();
+      updateAudit();
+    }
+
+    function reinstatePlayer(idx) {
+      // Late arrivals go to bottom of the batting order
+      var added = absentList.splice(idx, 1)[0];
+      roster.push(added);
+
+      renderRosterBadges();
+      renderGrid();
+      updateAudit();
+    }
+
     function shiftPlayer(idx, dir) {
       var target = idx + dir;
       if (target < 0 || target >= roster.length) return;
@@ -261,7 +337,16 @@
       var container = document.getElementById("rosterList");
       if (!container) return;
       container.innerHTML = "";
-      
+
+      document.getElementById("activeCount").innerText = roster.length;
+      document.getElementById("absentCount").innerText = absentList.length;
+
+      var absentBox = document.getElementById("absentContainer");
+      if (absentBox) {
+        absentBox.style.display = absentList.length > 0 ? "block" : "none";
+      }
+
+      // Render Active Roster
       roster.forEach(function(name, idx) {
         var badge = document.createElement("div");
         badge.className = "roster-tag";
@@ -269,10 +354,11 @@
         badge.dataset.index = idx;
         
         badge.innerHTML = 
-          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', -1)">◀</button>' +
+          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', -1)" title="Move Up">◀</button>' +
           '<span style="color:#64748b; font-size:0.75rem;">#' + (idx + 1) + '</span> ' +
           '<span>' + name + '</span>' +
-          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', 1)">▶</button>';
+          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', 1)" title="Move Down">▶</button>' +
+          '<button class="remove-btn" onclick="removePlayer(' + idx + ')" title="Mark Absent">✕</button>';
 
         badge.addEventListener("dragstart", function(e) {
           draggedIdx = idx;
@@ -313,6 +399,20 @@
 
         container.appendChild(badge);
       });
+
+      // Render Absent Roster
+      var absentListEl = document.getElementById("absentList");
+      if (absentListEl) {
+        absentListEl.innerHTML = "";
+        absentList.forEach(function(name, idx) {
+          var tag = document.createElement("div");
+          tag.className = "absent-tag";
+          tag.innerHTML = 
+            '<span>' + name + '</span>' +
+            '<button class="add-back-btn" onclick="reinstatePlayer(' + idx + ')">＋ Add to Bottom</button>';
+          absentListEl.appendChild(tag);
+        });
+      }
     }
 
     function renderGrid() {
@@ -457,10 +557,25 @@
     }
 
     function autoFillRemaining() {
+      if (roster.length < 7) {
+        alert("You need at least 7 active players to field a rotation.");
+        return;
+      }
+
       var IF_KEYS = POSITIONS.filter(function(p) { return p.type === "IF"; }).map(function(p) { return p.key; });
-      var MAX_ATTEMPTS = 600;
+      var MAX_ATTEMPTS = 700;
       var solved = false;
       var bestState = null;
+
+      // Active field positions needed based on active roster size
+      // (Prioritize Infield + Catcher if >= 9, drop extra outfielders if short)
+      var activeFieldPositions = [...POSITIONS];
+      if (roster.length < 10) {
+        var dropCount = 10 - roster.length;
+        var droppableOF = ["RF", "LF", "RC", "LC"];
+        var dropped = droppableOF.slice(0, dropCount);
+        activeFieldPositions = POSITIONS.filter(function(p) { return dropped.indexOf(p.key) === -1; });
+      }
 
       for (var attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
         var candidate = JSON.parse(JSON.stringify(rotationState));
@@ -483,7 +598,7 @@
         for (var inn = 0; inn < INNINGS; inn++) {
           for (var p = 0; p < POSITIONS.length; p++) {
             var player = candidate[inn][POSITIONS[p].key].player;
-            if (player) {
+            if (player && roster.indexOf(player) !== -1) {
               posUsage[player][POSITIONS[p].key]++;
               if (POSITIONS[p].type === "IF") {
                 ifCounts[player]++;
@@ -497,10 +612,10 @@
           var assignedThisInn = [];
           for (var k = 0; k < POSITIONS.length; k++) {
             var name = candidate[inn][POSITIONS[k].key].player;
-            if (name) assignedThisInn.push(name);
+            if (name && roster.indexOf(name) !== -1) assignedThisInn.push(name);
           }
 
-          var openPositions = POSITIONS.filter(function(pos) {
+          var openPositions = activeFieldPositions.filter(function(pos) {
             return !candidate[inn][pos.key].player;
           });
           
@@ -580,7 +695,7 @@
         renderGrid();
         updateAudit();
       } else {
-        alert("Could not satisfy all rotation constraints with the current pinned positions. Please unassign 1 or 2 manual spots and try again.");
+        alert("Could not satisfy all rotation constraints with the current pinned positions. Please clear a few manual selections and try again.");
       }
     }
 
@@ -603,7 +718,6 @@
       }
     }
 
-    // Run automatically as soon as DOM loads
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);
     } else {
