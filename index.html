@@ -21,6 +21,7 @@
       --warning-bg: #fef3c7;
       --warning-text: #92400e;
     }
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
@@ -35,6 +36,8 @@
       margin-bottom: 1.5rem;
       border-bottom: 2px solid var(--border);
       padding-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
     .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
@@ -56,34 +59,38 @@
     .card {
       background: var(--card);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.25rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       margin-bottom: 1.5rem;
       border: 1px solid var(--border);
     }
-    .grid-table {
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+    table {
       width: 100%;
       border-collapse: collapse;
-      overflow-x: auto;
-      display: block;
+      font-size: 0.85rem;
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 0.4rem 0.6rem;
+      padding: 0.45rem 0.6rem;
       text-align: center;
-      font-size: 0.85rem;
       white-space: nowrap;
     }
     th { background: #f1f5f9; font-weight: 600; }
     select {
       width: 100%;
-      padding: 0.25rem;
+      min-width: 105px;
+      padding: 0.3rem 0.2rem;
       border-radius: 4px;
       border: 1px solid var(--border);
       background: #fff;
       font-size: 0.8rem;
     }
-    .manual-set { background: #eff6ff; font-weight: 700; border-color: #3b82f6; }
+    .manual-set { background: #dbeafe; font-weight: 700; border-color: #2563eb; }
     .violation-pill {
       display: inline-block;
       padding: 0.2rem 0.5rem;
@@ -103,8 +110,8 @@
       font-weight: 600;
     }
     .roster-tag {
-      background: #e2e8f0;
-      padding: 6px 12px;
+      background: #f1f5f9;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -114,14 +121,23 @@
       align-items: center;
       gap: 6px;
       border: 1px solid #cbd5e1;
-      touch-action: none;
     }
     .roster-tag:active { cursor: grabbing; }
-    .roster-tag.dragging { opacity: 0.4; border: 2px dashed #0284c7; }
-    .roster-tag.over { border: 2px solid #2563eb; background: #dbeafe; }
+    .roster-tag.dragging { opacity: 0.4; }
+    .roster-tag.over { background: #bfdbfe; border-color: #2563eb; }
+    .move-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 0 2px;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    .move-btn:hover { color: var(--primary); }
     @media print {
       body { background: white; padding: 0; }
-      button, .no-print { display: none !important; }
+      button, .no-print, .move-btn { display: none !important; }
       .card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }
       th, td { border: 1px solid #000; padding: 4px; }
       select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }
@@ -144,57 +160,62 @@
   </header>
 
   <div class="card no-print">
-    <strong>Batting Order (Drag & Drop to reorder):</strong>
+    <strong>Batting Order:</strong> <span style="font-size: 0.8rem; color: var(--text-muted);">(Drag badges or use arrows to adjust order)</span>
     <div id="rosterList" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Fielding Grid (Lock dropdowns as needed, then Auto-Fill)</h3>
-    <table class="grid-table" id="rotationTable">
-      <thead>
-        <tr>
-          <th>Inning</th>
-          <th>Pitcher (P)</th>
-          <th>Catcher (C)</th>
-          <th>1st Base (1B)</th>
-          <th>2nd Base (2B)</th>
-          <th>3rd Base (3B)</th>
-          <th>Shortstop (SS)</th>
-          <th>Left Field (LF)</th>
-          <th>Left Center (LC)</th>
-          <th>Right Center (RC)</th>
-          <th>Right Field (RF)</th>
-          <th>Bench (Sit)</th>
-        </tr>
-      </thead>
-      <tbody id="rotationBody"></tbody>
-    </table>
+    <h3 style="margin: 0 0 0.25rem 0;">Fielding Grid</h3>
+    <small style="color: var(--text-muted); display: block; margin-bottom: 0.75rem;">Select any slot to lock a specific child into that position (highlighted in blue), then click Auto-Fill.</small>
+    <div class="table-container">
+      <table id="rotationTable">
+        <thead>
+          <tr>
+            <th>Inning</th>
+            <th>Pitcher (P)</th>
+            <th>Catcher (C)</th>
+            <th>1st Base (1B)</th>
+            <th>2nd Base (2B)</th>
+            <th>3rd Base (3B)</th>
+            <th>Shortstop (SS)</th>
+            <th>Left Field (LF)</th>
+            <th>Left Center (LC)</th>
+            <th>Right Center (RC)</th>
+            <th>Right Field (RF)</th>
+            <th>Bench (Sit)</th>
+          </tr>
+        </thead>
+        <tbody id="rotationBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
-    <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Rule Compliance & Playing Time Tracker</h3>
-    <table class="grid-table" style="width: 100%;">
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Total Infield</th>
-          <th>Infield (Inn 1-4)</th>
-          <th>Total Bench</th>
-          <th>Position Repeats</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="auditBody"></tbody>
-    </table>
+    <h3 style="margin: 0 0 0.5rem 0;">Rule Compliance & Playing Time Tracker</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Total Infield</th>
+            <th>Infield (Inn 1-4)</th>
+            <th>Total Bench</th>
+            <th>Position Breakdown</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="auditBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
-    let roster = [
+    var roster = [
       "Beckett", "Cash", "Jack B", "Max", "Dean", 
       "Arlo", "Jack N", "Ashton", "William", "Zachary"
     ];
 
-    const POSITIONS = [
+    var POSITIONS = [
       { key: "P", label: "Pitcher", type: "IF" },
       { key: "C", label: "Catcher", type: "IF" },
       { key: "1B", label: "1st Base", type: "IF" },
@@ -207,14 +228,16 @@
       { key: "RF", label: "Right Field", type: "OF" }
     ];
 
-    const INNINGS = 6;
-    let rotationState = [];
+    var INNINGS = 6;
+    var rotationState = [];
 
     function init() {
       rotationState = [];
-      for (let i = 0; i < INNINGS; i++) {
-        const inn = {};
-        POSITIONS.forEach(p => inn[p.key] = { player: "", manual: false });
+      for (var i = 0; i < INNINGS; i++) {
+        var inn = {};
+        for (var p = 0; p < POSITIONS.length; p++) {
+          inn[POSITIONS[p].key] = { player: "", manual: false };
+        }
         rotationState.push(inn);
       }
       renderRosterBadges();
@@ -222,54 +245,70 @@
       updateAudit();
     }
 
-    // --- Drag and Drop Batting Order ---
-    let draggedIdx = null;
+    function shiftPlayer(idx, dir) {
+      var target = idx + dir;
+      if (target < 0 || target >= roster.length) return;
+      var temp = roster[idx];
+      roster[idx] = roster[target];
+      roster[target] = temp;
+      renderRosterBadges();
+      renderGrid();
+    }
+
+    var draggedIdx = null;
 
     function renderRosterBadges() {
-      const container = document.getElementById("rosterList");
+      var container = document.getElementById("rosterList");
+      if (!container) return;
       container.innerHTML = "";
-      roster.forEach((name, idx) => {
-        const badge = document.createElement("div");
+      
+      roster.forEach(function(name, idx) {
+        var badge = document.createElement("div");
         badge.className = "roster-tag";
         badge.draggable = true;
         badge.dataset.index = idx;
-        badge.innerHTML = `<span style="color:#64748b; font-size:0.75rem;">#${idx + 1}</span> ${name}`;
+        
+        badge.innerHTML = 
+          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', -1)">◀</button>' +
+          '<span style="color:#64748b; font-size:0.75rem;">#' + (idx + 1) + '</span> ' +
+          '<span>' + name + '</span>' +
+          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', 1)">▶</button>';
 
-        badge.addEventListener("dragstart", (e) => {
+        badge.addEventListener("dragstart", function(e) {
           draggedIdx = idx;
           e.dataTransfer.effectAllowed = "move";
           badge.classList.add("dragging");
         });
 
-        badge.addEventListener("dragend", () => {
+        badge.addEventListener("dragend", function() {
           badge.classList.remove("dragging");
-          document.querySelectorAll(".roster-tag").forEach(el => el.classList.remove("over"));
+          var tags = document.querySelectorAll(".roster-tag");
+          tags.forEach(function(el) { el.classList.remove("over"); });
         });
 
-        badge.addEventListener("dragover", (e) => {
+        badge.addEventListener("dragover", function(e) {
           e.preventDefault();
           e.dataTransfer.dropEffect = "move";
         });
 
-        badge.addEventListener("dragenter", () => {
+        badge.addEventListener("dragenter", function() {
           if (draggedIdx !== idx) badge.classList.add("over");
         });
 
-        badge.addEventListener("dragleave", () => {
+        badge.addEventListener("dragleave", function() {
           badge.classList.remove("over");
         });
 
-        badge.addEventListener("drop", (e) => {
+        badge.addEventListener("drop", function(e) {
           e.preventDefault();
           badge.classList.remove("over");
           if (draggedIdx === null || draggedIdx === idx) return;
 
-          const movedItem = roster.splice(draggedIdx, 1)[0];
+          var movedItem = roster.splice(draggedIdx, 1)[0];
           roster.splice(idx, 0, movedItem);
           draggedIdx = null;
           renderRosterBadges();
           renderGrid();
-          updateAudit();
         });
 
         container.appendChild(badge);
@@ -277,62 +316,73 @@
     }
 
     function renderGrid() {
-      const tbody = document.getElementById("rotationBody");
+      var tbody = document.getElementById("rotationBody");
+      if (!tbody) return;
       tbody.innerHTML = "";
 
-      for (let inn = 0; inn < INNINGS; inn++) {
-        const tr = document.createElement("tr");
+      for (var inn = 0; inn < INNINGS; inn++) {
+        var tr = document.createElement("tr");
         
-        const tdInn = document.createElement("td");
-        tdInn.innerHTML = `<strong>Inning ${inn + 1}</strong>`;
+        var tdInn = document.createElement("td");
+        tdInn.innerHTML = "<strong>Inning " + (inn + 1) + "</strong>";
         tr.appendChild(tdInn);
 
-        POSITIONS.forEach(pos => {
-          const td = document.createElement("td");
-          const select = document.createElement("select");
+        for (var p = 0; p < POSITIONS.length; p++) {
+          var pos = POSITIONS[p];
+          var td = document.createElement("td");
+          var select = document.createElement("select");
+          
           if (rotationState[inn][pos.key].manual) {
-            select.classList.add("manual-set");
+            select.className = "manual-set";
           }
 
-          const optDefault = document.createElement("option");
+          var optDefault = document.createElement("option");
           optDefault.value = "";
           optDefault.innerText = "-- Open --";
           select.appendChild(optDefault);
 
-          roster.forEach(player => {
-            const opt = document.createElement("option");
+          for (var r = 0; r < roster.length; r++) {
+            var player = roster[r];
+            var opt = document.createElement("option");
             opt.value = player;
             opt.innerText = player;
             if (rotationState[inn][pos.key].player === player) {
               opt.selected = true;
             }
             select.appendChild(opt);
-          });
+          }
 
-          select.onchange = (e) => {
-            const val = e.target.value;
-            if (val === "") {
-              rotationState[inn][pos.key] = { player: "", manual: false };
-            } else {
-              POSITIONS.forEach(p => {
-                if (p.key !== pos.key && rotationState[inn][p.key].player === val) {
-                  rotationState[inn][p.key] = { player: "", manual: false };
+          (function(currentInn, currentPosKey) {
+            select.onchange = function(e) {
+              var val = e.target.value;
+              if (val === "") {
+                rotationState[currentInn][currentPosKey] = { player: "", manual: false };
+              } else {
+                for (var k = 0; k < POSITIONS.length; k++) {
+                  var otherKey = POSITIONS[k].key;
+                  if (otherKey !== currentPosKey && rotationState[currentInn][otherKey].player === val) {
+                    rotationState[currentInn][otherKey] = { player: "", manual: false };
+                  }
                 }
-              });
-              rotationState[inn][pos.key] = { player: val, manual: true };
-            }
-            renderGrid();
-            updateAudit();
-          };
+                rotationState[currentInn][currentPosKey] = { player: val, manual: true };
+              }
+              renderGrid();
+              updateAudit();
+            };
+          })(inn, pos.key);
 
           td.appendChild(select);
           tr.appendChild(td);
-        });
+        }
 
-        const assignedThisInn = POSITIONS.map(p => rotationState[inn][p.key].player).filter(Boolean);
-        const benchPlayers = roster.filter(p => !assignedThisInn.includes(p));
+        var assignedThisInn = [];
+        for (var k = 0; k < POSITIONS.length; k++) {
+          var pName = rotationState[inn][POSITIONS[k].key].player;
+          if (pName) assignedThisInn.push(pName);
+        }
+        var benchPlayers = roster.filter(function(p) { return assignedThisInn.indexOf(p) === -1; });
 
-        const tdBench = document.createElement("td");
+        var tdBench = document.createElement("td");
         tdBench.style.fontWeight = "bold";
         tdBench.style.color = benchPlayers.length > 0 ? "var(--warning-text)" : "var(--text-muted)";
         tdBench.innerText = benchPlayers.length > 0 ? benchPlayers.join(", ") : "None";
@@ -343,18 +393,20 @@
     }
 
     function updateAudit() {
-      const tbody = document.getElementById("auditBody");
+      var tbody = document.getElementById("auditBody");
+      if (!tbody) return;
       tbody.innerHTML = "";
 
-      roster.forEach(player => {
-        let totalIF = 0;
-        let earlyIF = 0;
-        let totalBench = 0;
-        const posCounts = {};
+      roster.forEach(function(player) {
+        var totalIF = 0;
+        var earlyIF = 0;
+        var totalBench = 0;
+        var posCounts = {};
 
-        for (let inn = 0; inn < INNINGS; inn++) {
-          let played = false;
-          POSITIONS.forEach(pos => {
+        for (var inn = 0; inn < INNINGS; inn++) {
+          var played = false;
+          for (var p = 0; p < POSITIONS.length; p++) {
+            var pos = POSITIONS[p];
             if (rotationState[inn][pos.key].player === player) {
               played = true;
               posCounts[pos.key] = (posCounts[pos.key] || 0) + 1;
@@ -363,76 +415,77 @@
                 if (inn < 4) earlyIF++;
               }
             }
-          });
+          }
           if (!played) totalBench++;
         }
 
-        const violations = [];
-        if (totalIF < 3) violations.push(`Need ${3 - totalIF} more IF`);
-        if (earlyIF < 2) violations.push(`Need ${2 - earlyIF} more IF (Inn 1-4)`);
-        if (totalBench > 2) violations.push(`Bench limit exceeded (${totalBench}/2)`);
+        var violations = [];
+        if (totalIF < 3) violations.push("Need " + (3 - totalIF) + " more IF");
+        if (earlyIF < 2) violations.push("Need " + (2 - earlyIF) + " more IF (Inn 1-4)");
+        if (totalBench > 2) violations.push("Bench limit exceeded (" + totalBench + "/2)");
         
-        const overusedPos = Object.entries(posCounts)
-          .filter(([key, count]) => {
-            const p = POSITIONS.find(pos => pos.key === key);
-            return p && p.type === "IF" && count > 2;
-          })
-          .map(([key, count]) => `${key}: ${count}x`);
-
-        if (overusedPos.length > 0) {
-          violations.push(`IF duplicate: ${overusedPos.join(", ")}`);
+        var overused = [];
+        for (var pKey in posCounts) {
+          var posObj = POSITIONS.find(function(item) { return item.key === pKey; });
+          if (posObj && posObj.type === "IF" && posCounts[pKey] > 2) {
+            overused.push(pKey + ": " + posCounts[pKey] + "x");
+          }
+        }
+        if (overused.length > 0) {
+          violations.push("IF repeat limit: " + overused.join(", "));
         }
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong>${player}</strong></td>
-          <td>${totalIF} / 3 min</td>
-          <td>${earlyIF} / 2 min</td>
-          <td>${totalBench} / 2 max</td>
-          <td>${Object.entries(posCounts).map(([k, c]) => `${k}:${c}`).join(" ") || "-"}</td>
-          <td>
-            ${violations.length === 0 
-              ? `<span class="status-ok">Compliant</span>` 
-              : violations.map(v => `<span class="violation-pill">${v}</span>`).join("")}
-          </td>
-        `;
+        var breakdownStr = [];
+        for (var k in posCounts) {
+          breakdownStr.push(k + ":" + posCounts[k]);
+        }
+
+        var tr = document.createElement("tr");
+        tr.innerHTML = 
+          "<td><strong>" + player + "</strong></td>" +
+          "<td>" + totalIF + " / 3 min</td>" +
+          "<td>" + earlyIF + " / 2 min</td>" +
+          "<td>" + totalBench + " / 2 max</td>" +
+          "<td>" + (breakdownStr.join(" ") || "-") + "</td>" +
+          "<td>" + 
+            (violations.length === 0 
+              ? '<span class="status-ok">Compliant</span>' 
+              : violations.map(function(v) { return '<span class="violation-pill">' + v + '</span>'; }).join("")) +
+          "</td>";
         tbody.appendChild(tr);
       });
     }
 
-    // --- Fast Iterative Solver (No Freezing) ---
     function autoFillRemaining() {
-      const IF_KEYS = POSITIONS.filter(p => p.type === "IF").map(p => p.key);
-      const OF_KEYS = POSITIONS.filter(p => p.type === "OF").map(p => p.key);
+      var IF_KEYS = POSITIONS.filter(function(p) { return p.type === "IF"; }).map(function(p) { return p.key; });
+      var MAX_ATTEMPTS = 600;
+      var solved = false;
+      var bestState = null;
 
-      // Attempt greedy randomized filling with restarts
-      const MAX_ATTEMPTS = 500;
-      let solved = false;
-      let bestState = null;
+      for (var attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        var candidate = JSON.parse(JSON.stringify(rotationState));
+        var validAttempt = true;
 
-      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-        const candidate = JSON.parse(JSON.stringify(rotationState));
-        let validAttempt = true;
+        var ifCounts = {};
+        var earlyIfCounts = {};
+        var posUsage = {};
 
-        // Player trackers
-        const ifCounts = {};
-        const earlyIfCounts = {};
-        const posUsage = {};
+        for (var i = 0; i < roster.length; i++) {
+          var pl = roster[i];
+          ifCounts[pl] = 0;
+          earlyIfCounts[pl] = 0;
+          posUsage[pl] = {};
+          for (var k = 0; k < POSITIONS.length; k++) {
+            posUsage[pl][POSITIONS[k].key] = 0;
+          }
+        }
 
-        roster.forEach(p => {
-          ifCounts[p] = 0;
-          earlyIfCounts[p] = 0;
-          posUsage[p] = {};
-          POSITIONS.forEach(pos => posUsage[p][pos.key] = 0);
-        });
-
-        // Initialize trackers with manual assignments
-        for (let inn = 0; inn < INNINGS; inn++) {
-          for (let pos of POSITIONS) {
-            const player = candidate[inn][pos.key].player;
+        for (var inn = 0; inn < INNINGS; inn++) {
+          for (var p = 0; p < POSITIONS.length; p++) {
+            var player = candidate[inn][POSITIONS[p].key].player;
             if (player) {
-              posUsage[player][pos.key]++;
-              if (pos.type === "IF") {
+              posUsage[player][POSITIONS[p].key]++;
+              if (POSITIONS[p].type === "IF") {
                 ifCounts[player]++;
                 if (inn < 4) earlyIfCounts[player]++;
               }
@@ -440,22 +493,24 @@
           }
         }
 
-        // Fill inning by inning
-        for (let inn = 0; inn < INNINGS; inn++) {
-          const assignedThisInn = new Set(
-            POSITIONS.map(p => candidate[inn][p.key].player).filter(Boolean)
-          );
+        for (var inn = 0; inn < INNINGS; inn++) {
+          var assignedThisInn = [];
+          for (var k = 0; k < POSITIONS.length; k++) {
+            var name = candidate[inn][POSITIONS[k].key].player;
+            if (name) assignedThisInn.push(name);
+          }
 
-          // Positions needing assignment this inning
-          const openPositions = POSITIONS.filter(p => !candidate[inn][p.key].player);
-          // Sort infield positions first to satisfy the stricter IF requirements
-          openPositions.sort((a, b) => (a.type === "IF" ? -1 : 1));
+          var openPositions = POSITIONS.filter(function(pos) {
+            return !candidate[inn][pos.key].player;
+          });
+          
+          openPositions.sort(function(a, b) { return (a.type === "IF" ? -1 : 1); });
 
-          for (let pos of openPositions) {
-            // Find available eligible players
-            const eligible = roster.filter(player => {
-              if (assignedThisInn.has(player)) return false;
-              if (pos.type === "IF" && posUsage[player][pos.key] >= 2) return false;
+          for (var o = 0; o < openPositions.length; o++) {
+            var pos = openPositions[o];
+            var eligible = roster.filter(function(cand) {
+              if (assignedThisInn.indexOf(cand) !== -1) return false;
+              if (pos.type === "IF" && posUsage[cand][pos.key] >= 2) return false;
               return true;
             });
 
@@ -464,16 +519,96 @@
               break;
             }
 
-            // Score candidates based on constraint priority
-            eligible.sort((a, b) => {
+            eligible.sort(function(a, b) {
               if (pos.type === "IF") {
                 if (inn < 4) {
-                  // Prioritize players needing early IF
-                  const aNeedEarly = 2 - earlyIfCounts[a];
-                  const bNeedEarly = 2 - earlyIfCounts[b];
+                  var aNeedEarly = 2 - earlyIfCounts[a];
+                  var bNeedEarly = 2 - earlyIfCounts[b];
                   if (aNeedEarly !== bNeedEarly) return bNeedEarly - aNeedEarly;
                 }
-                // Then prioritize overall IF need
-                const aNeed = 3 - ifCounts[a];
-                const bNeed = 3 - ifCounts[b];
-                if (aNeed !== b
+                var aNeed = 3 - ifCounts[a];
+                var bNeed = 3 - ifCounts[b];
+                if (aNeed !== bNeed) return bNeed - aNeed;
+              } else {
+                var aExcess = ifCounts[a];
+                var bExcess = ifCounts[b];
+                if (aExcess !== bExcess) return bExcess - aExcess;
+              }
+              return Math.random() - 0.5;
+            });
+
+            var chosen = eligible[0];
+            candidate[inn][pos.key] = { player: chosen, manual: false };
+            assignedThisInn.push(chosen);
+            posUsage[chosen][pos.key]++;
+            if (pos.type === "IF") {
+              ifCounts[chosen]++;
+              if (inn < 4) earlyIfCounts[chosen]++;
+            }
+          }
+
+          if (!validAttempt) break;
+        }
+
+        if (validAttempt) {
+          var meetsAll = true;
+          for (var r = 0; r < roster.length; r++) {
+            var rPlayer = roster[r];
+            if (ifCounts[rPlayer] < 3 || earlyIfCounts[rPlayer] < 2) {
+              meetsAll = false;
+              break;
+            }
+            for (var ifIdx = 0; ifIdx < IF_KEYS.length; ifIdx++) {
+              if (posUsage[rPlayer][IF_KEYS[ifIdx]] > 2) {
+                meetsAll = false;
+                break;
+              }
+            }
+            if (!meetsAll) break;
+          }
+
+          if (meetsAll) {
+            bestState = candidate;
+            solved = true;
+            break;
+          }
+        }
+      }
+
+      if (solved && bestState) {
+        rotationState = bestState;
+        renderGrid();
+        updateAudit();
+      } else {
+        alert("Could not satisfy all rotation constraints with the current pinned positions. Please unassign 1 or 2 manual spots and try again.");
+      }
+    }
+
+    function resetToManual() {
+      for (var inn = 0; inn < INNINGS; inn++) {
+        for (var p = 0; p < POSITIONS.length; p++) {
+          var k = POSITIONS[p].key;
+          if (!rotationState[inn][k].manual) {
+            rotationState[inn][k] = { player: "", manual: false };
+          }
+        }
+      }
+      renderGrid();
+      updateAudit();
+    }
+
+    function resetAll() {
+      if (confirm("Clear all field assignments?")) {
+        init();
+      }
+    }
+
+    // Run automatically as soon as DOM loads
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
