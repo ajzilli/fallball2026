@@ -126,7 +126,6 @@
     th.current-inning-col {
       background: #2563eb !important;
       color: #ffffff !important;
-      position: relative;
     }
     td.current-inning-col {
       background: var(--highlight-bg);
@@ -179,13 +178,11 @@
       align-items: center;
       gap: 5px;
       border: 1px solid #cbd5e1;
-      transition: all 0.15s ease;
     }
     .roster-tag:active { cursor: grabbing; }
     .roster-tag.dragging { opacity: 0.4; }
     .roster-tag.over { background: #bfdbfe; border-color: #2563eb; }
     
-    /* Last Out and Up Next Indicators */
     .roster-tag.last-out {
       background: #fee2e2;
       border: 2px solid #ef4444;
@@ -224,7 +221,6 @@
       border-radius: 3px;
       font-size: 0.65rem;
       font-weight: 800;
-      letter-spacing: 0.5px;
     }
 
     .absent-tag {
@@ -302,7 +298,7 @@
     <div class="card-header-row" style="margin-bottom: 0.25rem;">
       <div>
         <strong>Batting Order (<span id="activeCount">10</span> active):</strong>
-        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">Click <strong>Out</strong> to mark the last out and see who leads off next</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">Click <strong>Out</strong> to identify the last out and see who is UP NEXT</span>
       </div>
       <button class="secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="clearLastOut()">Clear Out Marker</button>
     </div>
@@ -363,7 +359,7 @@
       "Arlo", "Jack N", "Ashton", "William", "Zachary"
     ];
     var absentList = [];
-    var lastOutPlayer = null; // Stores name of player who made the last out
+    var lastOutPlayer = null;
 
     var POSITIONS = [
       { key: "P", label: "Pitcher", type: "IF" },
@@ -401,16 +397,13 @@
       if (next < 1) next = 1;
       if (next > INNINGS) next = INNINGS;
       currentInning = next;
-      document.getElementById("currentInningIndicator").innerText = "Inning " + currentInning;
+      var el = document.getElementById("currentInningIndicator");
+      if (el) el.innerText = "Inning " + currentInning;
       renderGrid();
     }
 
     function setLastOut(name) {
-      if (lastOutPlayer === name) {
-        lastOutPlayer = null; // Toggle off if clicked again
-      } else {
-        lastOutPlayer = name;
-      }
+      lastOutPlayer = (lastOutPlayer === name) ? null : name;
       renderRosterBadges();
     }
 
@@ -463,15 +456,16 @@
       if (!container) return;
       container.innerHTML = "";
 
-      document.getElementById("activeCount").innerText = roster.length;
-      document.getElementById("absentCount").innerText = absentList.length;
+      var activeEl = document.getElementById("activeCount");
+      if (activeEl) activeEl.innerText = roster.length;
+      var absentEl = document.getElementById("absentCount");
+      if (absentEl) absentEl.innerText = absentList.length;
 
       var absentBox = document.getElementById("absentContainer");
       if (absentBox) {
         absentBox.style.display = absentList.length > 0 ? "block" : "none";
       }
 
-      // Calculate who is up next based on last out
       var upNextPlayer = null;
       if (lastOutPlayer && roster.length > 0) {
         var outIdx = roster.indexOf(lastOutPlayer);
@@ -493,22 +487,58 @@
         if (isOut) badge.classList.add("last-out");
         if (isUpNext) badge.classList.add("up-next");
 
-        var extraBadge = "";
+        // Move Left button
+        var btnLeft = document.createElement("button");
+        btnLeft.className = "move-btn";
+        btnLeft.innerText = "◀";
+        btnLeft.onclick = function() { shiftPlayer(idx, -1); };
+        badge.appendChild(btnLeft);
+
+        // Spot number & Name
+        var numSpan = document.createElement("span");
+        numSpan.style.cssText = "color:#64748b; font-size:0.75rem;";
+        numSpan.innerText = "#" + (idx + 1);
+        badge.appendChild(numSpan);
+
+        var nameSpan = document.createElement("span");
+        nameSpan.innerText = name;
+        badge.appendChild(nameSpan);
+
+        // Status badges
         if (isOut) {
-          extraBadge = '<span style="font-size:0.65rem; background:#ef4444; color:#fff; padding:1px 4px; border-radius:3px; font-weight:bold;">3RD OUT</span>';
+          var outBadge = document.createElement("span");
+          outBadge.style.cssText = "font-size:0.65rem; background:#ef4444; color:#fff; padding:1px 4px; border-radius:3px; font-weight:bold;";
+          outBadge.innerText = "3RD OUT";
+          badge.appendChild(outBadge);
         } else if (isUpNext) {
-          extraBadge = '<span class="up-next-badge">UP NEXT</span>';
+          var upBadge = document.createElement("span");
+          upBadge.className = "up-next-badge";
+          upBadge.innerText = "UP NEXT";
+          badge.appendChild(upBadge);
         }
 
-        badge.innerHTML = 
-          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', -1)" title="Move Up">◀</button>' +
-          '<span style="color:#64748b; font-size:0.75rem;">#' + (idx + 1) + '</span> ' +
-          '<span>' + name + '</span> ' +
-          extraBadge +
-          '<button class="out-btn ' + (isOut ? "active" : "") + '" onclick="setLastOut(\'' + name.replace(/'/g, "\\'") + '\')" title="Mark as last out of the inning">' + (isOut ? "Out ✓" : "Out") + '</button>' +
-          '<button class="move-btn" onclick="shiftPlayer(' + idx + ', 1)" title="Move Down">▶</button>' +
-          '<button class="remove-btn" onclick="removePlayer(' + idx + ')" title="Mark Absent">✕</button>';
+        // Out button
+        var btnOut = document.createElement("button");
+        btnOut.className = "out-btn" + (isOut ? " active" : "");
+        btnOut.innerText = isOut ? "Out ✓" : "Out";
+        btnOut.onclick = function() { setLastOut(name); };
+        badge.appendChild(btnOut);
 
+        // Move Right button
+        var btnRight = document.createElement("button");
+        btnRight.className = "move-btn";
+        btnRight.innerText = "▶";
+        btnRight.onclick = function() { shiftPlayer(idx, 1); };
+        badge.appendChild(btnRight);
+
+        // Remove (Absent) button
+        var btnRem = document.createElement("button");
+        btnRem.className = "remove-btn";
+        btnRem.innerText = "✕";
+        btnRem.onclick = function() { removePlayer(idx); };
+        badge.appendChild(btnRem);
+
+        // Drag & Drop
         badge.addEventListener("dragstart", function(e) {
           draggedIdx = idx;
           e.dataTransfer.effectAllowed = "move";
@@ -517,8 +547,7 @@
 
         badge.addEventListener("dragend", function() {
           badge.classList.remove("dragging");
-          var tags = document.querySelectorAll(".roster-tag");
-          tags.forEach(function(el) { el.classList.remove("over"); });
+          document.querySelectorAll(".roster-tag").forEach(function(el) { el.classList.remove("over"); });
         });
 
         badge.addEventListener("dragover", function(e) {
@@ -538,9 +567,8 @@
           e.preventDefault();
           badge.classList.remove("over");
           if (draggedIdx === null || draggedIdx === idx) return;
-
-          var movedItem = roster.splice(draggedIdx, 1)[0];
-          roster.splice(idx, 0, movedItem);
+          var moved = roster.splice(draggedIdx, 1)[0];
+          roster.splice(idx, 0, moved);
           draggedIdx = null;
           renderRosterBadges();
           renderGrid();
@@ -555,9 +583,17 @@
         absentList.forEach(function(name, idx) {
           var tag = document.createElement("div");
           tag.className = "absent-tag";
-          tag.innerHTML = 
-            '<span>' + name + '</span>' +
-            '<button class="add-back-btn" onclick="reinstatePlayer(' + idx + ')">＋ Add to Bottom</button>';
+
+          var span = document.createElement("span");
+          span.innerText = name;
+          tag.appendChild(span);
+
+          var addBtn = document.createElement("button");
+          addBtn.className = "add-back-btn";
+          addBtn.innerText = "＋ Add to Bottom";
+          addBtn.onclick = function() { reinstatePlayer(idx); };
+          tag.appendChild(addBtn);
+
           absentListEl.appendChild(tag);
         });
       }
@@ -571,6 +607,7 @@
       thead.innerHTML = "";
       tbody.innerHTML = "";
 
+      // Header row
       var headTr = document.createElement("tr");
       var thPos = document.createElement("th");
       thPos.style.textAlign = "left";
@@ -588,6 +625,7 @@
       }
       thead.appendChild(headTr);
 
+      // Positions rows
       POSITIONS.forEach(function(pos) {
         var tr = document.createElement("tr");
         
@@ -649,6 +687,7 @@
         tbody.appendChild(tr);
       });
 
+      // Bench row
       var benchTr = document.createElement("tr");
       benchTr.style.background = "#f8fafc";
       var benchLabelTd = document.createElement("td");
@@ -693,3 +732,203 @@
           var played = false;
           for (var p = 0; p < POSITIONS.length; p++) {
             var pos = POSITIONS[p];
+            if (rotationState[inn][pos.key].player === player) {
+              played = true;
+              posCounts[pos.key] = (posCounts[pos.key] || 0) + 1;
+              if (pos.type === "IF") {
+                totalIF++;
+                if (inn < 4) earlyIF++;
+              }
+            }
+          }
+          if (!played) totalBench++;
+        }
+
+        var violations = [];
+        if (totalIF < 3) violations.push("Need " + (3 - totalIF) + " more IF");
+        if (earlyIF < 2) violations.push("Need " + (2 - earlyIF) + " more IF (Inn 1-4)");
+        if (totalBench > 2) violations.push("Bench limit exceeded (" + totalBench + "/2)");
+        
+        var overused = [];
+        for (var pKey in posCounts) {
+          var posObj = POSITIONS.find(function(item) { return item.key === pKey; });
+          if (posObj && posObj.type === "IF" && posCounts[pKey] > 2) {
+            overused.push(pKey + ": " + posCounts[pKey] + "x");
+          }
+        }
+        if (overused.length > 0) {
+          violations.push("IF repeat limit: " + overused.join(", "));
+        }
+
+        var breakdownStr = [];
+        for (var k in posCounts) {
+          breakdownStr.push(k + ":" + posCounts[k]);
+        }
+
+        var tr = document.createElement("tr");
+        tr.innerHTML = 
+          "<td><strong>" + player + "</strong></td>" +
+          "<td>" + totalIF + " / 3 min</td>" +
+          "<td>" + earlyIF + " / 2 min</td>" +
+          "<td>" + totalBench + " / 2 max</td>" +
+          "<td>" + (breakdownStr.join(" ") || "-") + "</td>" +
+          "<td>" + 
+            (violations.length === 0 
+              ? '<span class="status-ok">Compliant</span>' 
+              : violations.map(function(v) { return '<span class="violation-pill">' + v + '</span>'; }).join("")) +
+          "</td>";
+        tbody.appendChild(tr);
+      });
+    }
+
+    function autoFillRemaining() {
+      if (roster.length < 7) {
+        alert("You need at least 7 active players to field a rotation.");
+        return;
+      }
+
+      var IF_KEYS = POSITIONS.filter(function(p) { return p.type === "IF"; }).map(function(p) { return p.key; });
+      var MAX_ATTEMPTS = 700;
+      var solved = false;
+      var bestState = null;
+
+      var activeFieldPositions = [...POSITIONS];
+      if (roster.length < 10) {
+        var dropCount = 10 - roster.length;
+        var droppableOF = ["RF", "LF", "RC", "LC"];
+        var dropped = droppableOF.slice(0, dropCount);
+        activeFieldPositions = POSITIONS.filter(function(p) { return dropped.indexOf(p.key) === -1; });
+      }
+
+      for (var attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        var candidate = JSON.parse(JSON.stringify(rotationState));
+        var validAttempt = true;
+
+        var ifCounts = {};
+        var earlyIfCounts = {};
+        var posUsage = {};
+
+        for (var i = 0; i < roster.length; i++) {
+          var pl = roster[i];
+          ifCounts[pl] = 0;
+          earlyIfCounts[pl] = 0;
+          posUsage[pl] = {};
+          for (var k = 0; k < POSITIONS.length; k++) {
+            posUsage[pl][POSITIONS[k].key] = 0;
+          }
+        }
+
+        for (var inn = 0; inn < INNINGS; inn++) {
+          for (var p = 0; p < POSITIONS.length; p++) {
+            var player = candidate[inn][POSITIONS[p].key].player;
+            if (player && roster.indexOf(player) !== -1) {
+              posUsage[player][POSITIONS[p].key]++;
+              if (POSITIONS[p].type === "IF") {
+                ifCounts[player]++;
+                if (inn < 4) earlyIfCounts[player]++;
+              }
+            }
+          }
+        }
+
+        for (var inn = 0; inn < INNINGS; inn++) {
+          var assignedThisInn = [];
+          for (var k = 0; k < POSITIONS.length; k++) {
+            var name = candidate[inn][POSITIONS[k].key].player;
+            if (name && roster.indexOf(name) !== -1) assignedThisInn.push(name);
+          }
+
+          var openPositions = activeFieldPositions.filter(function(pos) {
+            return !candidate[inn][pos.key].player;
+          });
+          
+          openPositions.sort(function(a, b) { return (a.type === "IF" ? -1 : 1); });
+
+          for (var o = 0; o < openPositions.length; o++) {
+            var pos = openPositions[o];
+            var eligible = roster.filter(function(cand) {
+              if (assignedThisInn.indexOf(cand) !== -1) return false;
+              if (pos.type === "IF" && posUsage[cand][pos.key] >= 2) return false;
+              return true;
+            });
+
+            if (eligible.length === 0) {
+              validAttempt = false;
+              break;
+            }
+
+            eligible.sort(function(a, b) {
+              if (pos.type === "IF") {
+                if (inn < 4) {
+                  var aNeedEarly = 2 - earlyIfCounts[a];
+                  var bNeedEarly = 2 - earlyIfCounts[b];
+                  if (aNeedEarly !== bNeedEarly) return bNeedEarly - aNeedEarly;
+                }
+                var aNeed = 3 - ifCounts[a];
+                var bNeed = 3 - ifCounts[b];
+                if (aNeed !== bNeed) return bNeed - aNeed;
+              } else {
+                var aExcess = ifCounts[a];
+                var bExcess = ifCounts[b];
+                if (aExcess !== bExcess) return bExcess - aExcess;
+              }
+              return Math.random() - 0.5;
+            });
+
+            var chosen = eligible[0];
+            candidate[inn][pos.key] = { player: chosen, manual: false };
+            assignedThisInn.push(chosen);
+            posUsage[chosen][pos.key]++;
+            if (pos.type === "IF") {
+              ifCounts[chosen]++;
+              if (inn < 4) earlyIfCounts[chosen]++;
+            }
+          }
+
+          if (!validAttempt) break;
+        }
+
+        if (validAttempt) {
+          var meetsAll = true;
+          for (var r = 0; r < roster.length; r++) {
+            var rPlayer = roster[r];
+            if (ifCounts[rPlayer] < 3 || earlyIfCounts[rPlayer] < 2) {
+              meetsAll = false;
+              break;
+            }
+            for (var ifIdx = 0; ifIdx < IF_KEYS.length; ifIdx++) {
+              if (posUsage[rPlayer][IF_KEYS[ifIdx]] > 2) {
+                meetsAll = false;
+                break;
+              }
+            }
+            if (!meetsAll) break;
+          }
+
+          if (meetsAll) {
+            bestState = candidate;
+            solved = true;
+            break;
+          }
+        }
+      }
+
+      if (solved && bestState) {
+        rotationState = bestState;
+        renderGrid();
+        updateAudit();
+      } else {
+        alert("Could not satisfy all rotation constraints with the current pinned positions. Please clear a few manual selections and try again.");
+      }
+    }
+
+    function resetToManual() {
+      for (var inn = 0; inn < INNINGS; inn++) {
+        for (var p = 0; p < POSITIONS.length; p++) {
+          var k = POSITIONS[p].key;
+          if (!rotationState[inn][k].manual) {
+            rotationState[inn][k] = { player: "", manual: false };
+          }
+        }
+      }
+      renderGrid();
