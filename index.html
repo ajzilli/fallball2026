@@ -29,47 +29,43 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 1.5rem;
+      padding: 1.25rem;
     }
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       border-bottom: 2px solid var(--border);
-      padding-bottom: 1rem;
+      padding-bottom: 0.75rem;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.75rem;
     }
-    h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
-    .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    h1 { margin: 0; font-size: 1.4rem; color: var(--primary); }
+    .btn-group { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
     button {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 0.45rem 0.85rem;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
     }
     button:hover { background: var(--primary-hover); }
     button.secondary { background: #64748b; }
     button.secondary:hover { background: #475569; }
     button.danger { background: #ef4444; }
     button.danger:hover { background: #dc2626; }
-    button.nav-btn {
-      background: #0284c7;
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
-    }
+    button.nav-btn { background: #0284c7; }
     button.nav-btn:hover { background: #0369a1; }
     .card {
       background: var(--card);
       border-radius: 8px;
-      padding: 1.25rem;
+      padding: 1rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       border: 1px solid var(--border);
     }
     .card-header-row {
@@ -77,8 +73,8 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
     }
     .table-container {
       width: 100%;
@@ -91,7 +87,7 @@
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 0.5rem 0.6rem;
+      padding: 0.45rem 0.55rem;
       text-align: center;
       white-space: nowrap;
     }
@@ -100,13 +96,13 @@
       text-align: left;
       font-weight: 700;
       background: #f8fafc;
-      width: 160px;
+      width: 155px;
     }
     .pos-type-tag {
       font-size: 0.7rem;
-      padding: 2px 5px;
+      padding: 2px 4px;
       border-radius: 3px;
-      margin-left: 6px;
+      margin-left: 5px;
       font-weight: 600;
     }
     .type-if { background: #e0e7ff; color: #3730a3; }
@@ -114,27 +110,22 @@
     select {
       width: 100%;
       min-width: 110px;
-      padding: 0.35rem 0.3rem;
+      padding: 0.3rem;
       border-radius: 4px;
       border: 1px solid var(--border);
       background: #fff;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
     .manual-set { background: #dbeafe; font-weight: 700; border-color: #2563eb; }
     
-    /* Current Inning Highlight Styles */
-    th.current-inning-col {
+    th.col-active {
       background: #2563eb !important;
       color: #ffffff !important;
     }
-    td.current-inning-col {
+    td.col-active {
       background: var(--highlight-bg);
       border-left: 2px solid var(--highlight-border) !important;
       border-right: 2px solid var(--highlight-border) !important;
-    }
-    td.current-inning-col select {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
     }
     .inning-badge {
       display: inline-block;
@@ -145,10 +136,9 @@
       font-size: 0.8rem;
       font-weight: 700;
     }
-
     .violation-pill {
       display: inline-block;
-      padding: 0.2rem 0.5rem;
+      padding: 0.2rem 0.45rem;
       border-radius: 4px;
       font-size: 0.75rem;
       margin: 0.15rem;
@@ -164,25 +154,18 @@
       font-size: 0.75rem;
       font-weight: 600;
     }
-    
-    /* Lineup Tag Styles */
     .roster-tag {
       background: #f1f5f9;
-      padding: 6px 8px;
+      padding: 5px 7px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
-      cursor: grab;
       user-select: none;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       border: 1px solid #cbd5e1;
     }
-    .roster-tag:active { cursor: grabbing; }
-    .roster-tag.dragging { opacity: 0.4; }
-    .roster-tag.over { background: #bfdbfe; border-color: #2563eb; }
-    
     .roster-tag.last-out {
       background: #fee2e2;
       border: 2px solid #ef4444;
@@ -199,35 +182,25 @@
       color: #64748b;
       cursor: pointer;
       border-radius: 4px;
-      padding: 2px 5px;
+      padding: 1px 4px;
       font-size: 0.7rem;
       font-weight: 700;
-      line-height: 1.1;
     }
-    .out-btn:hover {
-      background: #fee2e2;
-      border-color: #ef4444;
-      color: #991b1b;
-    }
-    .out-btn.active {
-      background: #ef4444;
-      border-color: #dc2626;
-      color: #ffffff;
-    }
+    .out-btn:hover { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+    .out-btn.active { background: #ef4444; border-color: #dc2626; color: #ffffff; }
     .up-next-badge {
       background: #f59e0b;
       color: #ffffff;
-      padding: 1px 5px;
+      padding: 1px 4px;
       border-radius: 3px;
       font-size: 0.65rem;
       font-weight: 800;
     }
-
     .absent-tag {
       background: var(--danger-bg);
       color: var(--danger-text);
       border: 1px solid var(--danger-border);
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -240,9 +213,8 @@
       border: none;
       color: #64748b;
       cursor: pointer;
-      padding: 0 2px;
-      font-size: 0.9rem;
-      line-height: 1;
+      padding: 0 1px;
+      font-size: 0.85rem;
     }
     .move-btn:hover { color: var(--primary); }
     .remove-btn {
@@ -250,9 +222,8 @@
       border: none;
       color: #ef4444;
       cursor: pointer;
-      padding: 0 2px 0 2px;
-      font-size: 0.95rem;
-      line-height: 1;
+      padding: 0 2px;
+      font-size: 0.9rem;
       font-weight: bold;
     }
     .remove-btn:hover { color: #991b1b; }
@@ -262,20 +233,16 @@
       color: #991b1b;
       cursor: pointer;
       border-radius: 4px;
-      padding: 2px 6px;
+      padding: 2px 5px;
       font-size: 0.75rem;
       font-weight: bold;
     }
-    .add-back-btn:hover { background: #fee2e2; }
-
     @media print {
       body { background: white; padding: 0; }
       button, .no-print, .move-btn, .remove-btn, .add-back-btn, .out-btn { display: none !important; }
       .card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }
       th, td { border: 1px solid #000; padding: 4px; }
       select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }
-      th.current-inning-col { background: #e2e8f0 !important; color: #000 !important; }
-      td.current-inning-col { background: none; border: 1px solid #000 !important; }
     }
   </style>
 </head>
@@ -287,28 +254,28 @@
       <small style="color: var(--text-muted);">6-Inning rotation validator & optimizer</small>
     </div>
     <div class="btn-group no-print">
-      <button onclick="autoFillRemaining()">Auto-Fill Open Positions</button>
-      <button class="secondary" onclick="resetToManual()">Clear Unlocked</button>
+      <button onclick="runAutoFill()">Auto-Fill Open Positions</button>
+      <button class="secondary" onclick="clearUnlocked()">Clear Unlocked</button>
       <button class="danger" onclick="resetAll()">Reset All</button>
       <button onclick="window.print()">Print Lineup Sheet</button>
     </div>
   </header>
 
   <div class="card no-print">
-    <div class="card-header-row" style="margin-bottom: 0.25rem;">
+    <div class="card-header-row">
       <div>
         <strong>Batting Order (<span id="activeCount">10</span> active):</strong>
-        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">Click <strong>Out</strong> to identify the last out and see who is UP NEXT</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.35rem;">Click <strong>Out</strong> to mark the last out and see who leads off next</span>
       </div>
-      <button class="secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="clearLastOut()">Clear Out Marker</button>
+      <button class="secondary" style="padding: 2px 7px; font-size: 0.75rem;" onclick="clearOutMarker()">Clear Out Marker</button>
     </div>
-    <div id="rosterList" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+    <div id="rosterBadges" style="margin-top: 0.5rem; display: flex; gap: 0.4rem; flex-wrap: wrap;"></div>
 
-    <div id="absentContainer" style="margin-top: 1.25rem; border-top: 1px dashed var(--border); padding-top: 0.75rem; display: none;">
-      <div style="font-size: 0.85rem; font-weight: 600; color: var(--danger-text); margin-bottom: 0.5rem;">
-        Absent / Not Arrived Yet (<span id="absentCount">0</span>):
+    <div id="absentContainer" style="margin-top: 0.75rem; border-top: 1px dashed var(--border); padding-top: 0.5rem; display: none;">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--danger-text); margin-bottom: 0.35rem;">
+        Absent / Late (<span id="absentCount">0</span>):
       </div>
-      <div id="absentList" style="display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+      <div id="absentBadges" style="display: flex; gap: 0.4rem; flex-wrap: wrap;"></div>
     </div>
   </div>
 
@@ -316,26 +283,46 @@
     <div class="card-header-row">
       <div>
         <h3 style="margin: 0; display: inline-block; vertical-align: middle;">Fielding Rotation Grid</h3>
-        <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.5rem;">Positions vertically, Innings horizontally</span>
       </div>
       <div class="btn-group no-print">
-        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-right: 0.25rem;">Live Tracker:</span>
-        <button class="nav-btn" onclick="stepInning(-1)">◀ Prev Inning</button>
-        <span id="currentInningIndicator" class="inning-badge">Inning 1</span>
-        <button class="nav-btn" onclick="stepInning(1)">Next Inning ▶</button>
+        <button class="nav-btn" onclick="navInning(-1)">◀ Prev Inning</button>
+        <span id="curInningBadge" class="inning-badge">Inning 1</span>
+        <button class="nav-btn" onclick="navInning(1)">Next Inning ▶</button>
       </div>
     </div>
 
     <div class="table-container">
-      <table id="rotationTable">
-        <thead id="gridHead"></thead>
-        <tbody id="gridBody"></tbody>
+      <table id="mainGrid">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Position / Inning</th>
+            <th class="th-inn col-inn-1 col-active">Inning 1</th>
+            <th class="th-inn col-inn-2">Inning 2</th>
+            <th class="th-inn col-inn-3">Inning 3</th>
+            <th class="th-inn col-inn-4">Inning 4</th>
+            <th class="th-inn col-inn-5">Inning 5</th>
+            <th class="th-inn col-inn-6">Inning 6</th>
+          </tr>
+        </thead>
+        <tbody id="posRows">
+          <tr data-pos="P"><td class="pos-label">Pitcher (P)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="C"><td class="pos-label">Catcher (C)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="1B"><td class="pos-label">1st Base (1B)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="2B"><td class="pos-label">2nd Base (2B)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="3B"><td class="pos-label">3rd Base (3B)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="SS"><td class="pos-label">Shortstop (SS)<span class="pos-type-tag type-if">IF</span></td></tr>
+          <tr data-pos="LF"><td class="pos-label">Left Field (LF)<span class="pos-type-tag type-of">OF</span></td></tr>
+          <tr data-pos="LC"><td class="pos-label">Left Center (LC)<span class="pos-type-tag type-of">OF</span></td></tr>
+          <tr data-pos="RC"><td class="pos-label">Right Center (RC)<span class="pos-type-tag type-of">OF</span></td></tr>
+          <tr data-pos="RF"><td class="pos-label">Right Field (RF)<span class="pos-type-tag type-of">OF</span></td></tr>
+          <tr id="benchRow" style="background:#f8fafc;"><td class="pos-label"><strong>Bench (Sitting)</strong></td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 
   <div class="card">
-    <h3 style="margin: 0 0 0.5rem 0;">Rule Compliance & Playing Time Tracker</h3>
+    <h3 style="margin: 0 0 0.5rem 0;">Rule Compliance Tracker</h3>
     <div class="table-container">
       <table>
         <thead>
@@ -344,591 +331,108 @@
             <th>Total Infield</th>
             <th>Infield (Inn 1-4)</th>
             <th>Total Bench</th>
-            <th>Position Breakdown</th>
+            <th>Position Usage</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody id="auditBody"></tbody>
+        <tbody id="auditRows"></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    var roster = [
-      "Beckett", "Cash", "Jack B", "Max", "Dean", 
-      "Arlo", "Jack N", "Ashton", "William", "Zachary"
-    ];
-    var absentList = [];
-    var lastOutPlayer = null;
-
-    var POSITIONS = [
-      { key: "P", label: "Pitcher", type: "IF" },
-      { key: "C", label: "Catcher", type: "IF" },
-      { key: "1B", label: "1st Base", type: "IF" },
-      { key: "2B", label: "2nd Base", type: "IF" },
-      { key: "3B", label: "3rd Base", type: "IF" },
-      { key: "SS", label: "Shortstop", type: "IF" },
-      { key: "LF", label: "Left Field", type: "OF" },
-      { key: "LC", label: "Left Center", type: "OF" },
-      { key: "RC", label: "Right Center", type: "OF" },
-      { key: "RF", label: "Right Field", type: "OF" }
+    const INITIAL_ROSTER = ["Beckett", "Cash", "Jack B", "Max", "Dean", "Arlo", "Jack N", "Ashton", "William", "Zachary"];
+    const POSITIONS = [
+      { key: "P", type: "IF" }, { key: "C", type: "IF" }, { key: "1B", type: "IF" },
+      { key: "2B", type: "IF" }, { key: "3B", type: "IF" }, { key: "SS", type: "IF" },
+      { key: "LF", type: "OF" }, { key: "LC", type: "OF" }, { key: "RC", type: "OF" }, { key: "RF", type: "OF" }
     ];
 
-    var INNINGS = 6;
-    var currentInning = 1;
-    var rotationState = [];
+    let activeRoster = [...INITIAL_ROSTER];
+    let absentRoster = [];
+    let curInning = 1;
+    let outPlayer = null;
 
-    function init() {
-      rotationState = [];
-      for (var i = 0; i < INNINGS; i++) {
-        var inn = {};
-        for (var p = 0; p < POSITIONS.length; p++) {
-          inn[POSITIONS[p].key] = { player: "", manual: false };
+    // gridData[inn 0-5][posKey] = { player: "", manual: false }
+    let gridData = Array.from({ length: 6 }, () => {
+      let inn = {};
+      POSITIONS.forEach(p => inn[p.key] = { player: "", manual: false });
+      return inn;
+    });
+
+    // 1. Build Static DOM Table Cells Once
+    function constructGridCells() {
+      POSITIONS.forEach(p => {
+        const row = document.querySelector(`tr[data-pos="${p.key}"]`);
+        for (let i = 1; i <= 6; i++) {
+          const td = document.createElement("td");
+          td.className = `col-inn-${i}` + (i === 1 ? " col-active" : "");
+          const sel = document.createElement("select");
+          sel.dataset.pos = p.key;
+          sel.dataset.inn = i - 1;
+          sel.onchange = (e) => onUserManualSelect(i - 1, p.key, e.target.value);
+          td.appendChild(sel);
+          row.appendChild(td);
         }
-        rotationState.push(inn);
-      }
-      renderRosterBadges();
-      renderGrid();
-      updateAudit();
-    }
-
-    function stepInning(dir) {
-      var next = currentInning + dir;
-      if (next < 1) next = 1;
-      if (next > INNINGS) next = INNINGS;
-      currentInning = next;
-      var el = document.getElementById("currentInningIndicator");
-      if (el) el.innerText = "Inning " + currentInning;
-      renderGrid();
-    }
-
-    function setLastOut(name) {
-      lastOutPlayer = (lastOutPlayer === name) ? null : name;
-      renderRosterBadges();
-    }
-
-    function clearLastOut() {
-      lastOutPlayer = null;
-      renderRosterBadges();
-    }
-
-    function removePlayer(idx) {
-      var removed = roster.splice(idx, 1)[0];
-      absentList.push(removed);
-      if (lastOutPlayer === removed) lastOutPlayer = null;
-
-      for (var i = 0; i < INNINGS; i++) {
-        for (var p = 0; p < POSITIONS.length; p++) {
-          var k = POSITIONS[p].key;
-          if (rotationState[i][k].player === removed) {
-            rotationState[i][k] = { player: "", manual: false };
-          }
-        }
-      }
-
-      renderRosterBadges();
-      renderGrid();
-      updateAudit();
-    }
-
-    function reinstatePlayer(idx) {
-      var added = absentList.splice(idx, 1)[0];
-      roster.push(added);
-      renderRosterBadges();
-      renderGrid();
-      updateAudit();
-    }
-
-    function shiftPlayer(idx, dir) {
-      var target = idx + dir;
-      if (target < 0 || target >= roster.length) return;
-      var temp = roster[idx];
-      roster[idx] = roster[target];
-      roster[target] = temp;
-      renderRosterBadges();
-      renderGrid();
-    }
-
-    var draggedIdx = null;
-
-    function renderRosterBadges() {
-      var container = document.getElementById("rosterList");
-      if (!container) return;
-      container.innerHTML = "";
-
-      var activeEl = document.getElementById("activeCount");
-      if (activeEl) activeEl.innerText = roster.length;
-      var absentEl = document.getElementById("absentCount");
-      if (absentEl) absentEl.innerText = absentList.length;
-
-      var absentBox = document.getElementById("absentContainer");
-      if (absentBox) {
-        absentBox.style.display = absentList.length > 0 ? "block" : "none";
-      }
-
-      var upNextPlayer = null;
-      if (lastOutPlayer && roster.length > 0) {
-        var outIdx = roster.indexOf(lastOutPlayer);
-        if (outIdx !== -1) {
-          var nextIdx = (outIdx + 1) % roster.length;
-          upNextPlayer = roster[nextIdx];
-        }
-      }
-
-      roster.forEach(function(name, idx) {
-        var badge = document.createElement("div");
-        badge.className = "roster-tag";
-        badge.draggable = true;
-        badge.dataset.index = idx;
-
-        var isOut = (name === lastOutPlayer);
-        var isUpNext = (name === upNextPlayer);
-
-        if (isOut) badge.classList.add("last-out");
-        if (isUpNext) badge.classList.add("up-next");
-
-        // Move Left button
-        var btnLeft = document.createElement("button");
-        btnLeft.className = "move-btn";
-        btnLeft.innerText = "◀";
-        btnLeft.onclick = function() { shiftPlayer(idx, -1); };
-        badge.appendChild(btnLeft);
-
-        // Spot number & Name
-        var numSpan = document.createElement("span");
-        numSpan.style.cssText = "color:#64748b; font-size:0.75rem;";
-        numSpan.innerText = "#" + (idx + 1);
-        badge.appendChild(numSpan);
-
-        var nameSpan = document.createElement("span");
-        nameSpan.innerText = name;
-        badge.appendChild(nameSpan);
-
-        // Status badges
-        if (isOut) {
-          var outBadge = document.createElement("span");
-          outBadge.style.cssText = "font-size:0.65rem; background:#ef4444; color:#fff; padding:1px 4px; border-radius:3px; font-weight:bold;";
-          outBadge.innerText = "3RD OUT";
-          badge.appendChild(outBadge);
-        } else if (isUpNext) {
-          var upBadge = document.createElement("span");
-          upBadge.className = "up-next-badge";
-          upBadge.innerText = "UP NEXT";
-          badge.appendChild(upBadge);
-        }
-
-        // Out button
-        var btnOut = document.createElement("button");
-        btnOut.className = "out-btn" + (isOut ? " active" : "");
-        btnOut.innerText = isOut ? "Out ✓" : "Out";
-        btnOut.onclick = function() { setLastOut(name); };
-        badge.appendChild(btnOut);
-
-        // Move Right button
-        var btnRight = document.createElement("button");
-        btnRight.className = "move-btn";
-        btnRight.innerText = "▶";
-        btnRight.onclick = function() { shiftPlayer(idx, 1); };
-        badge.appendChild(btnRight);
-
-        // Remove (Absent) button
-        var btnRem = document.createElement("button");
-        btnRem.className = "remove-btn";
-        btnRem.innerText = "✕";
-        btnRem.onclick = function() { removePlayer(idx); };
-        badge.appendChild(btnRem);
-
-        // Drag & Drop
-        badge.addEventListener("dragstart", function(e) {
-          draggedIdx = idx;
-          e.dataTransfer.effectAllowed = "move";
-          badge.classList.add("dragging");
-        });
-
-        badge.addEventListener("dragend", function() {
-          badge.classList.remove("dragging");
-          document.querySelectorAll(".roster-tag").forEach(function(el) { el.classList.remove("over"); });
-        });
-
-        badge.addEventListener("dragover", function(e) {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "move";
-        });
-
-        badge.addEventListener("dragenter", function() {
-          if (draggedIdx !== idx) badge.classList.add("over");
-        });
-
-        badge.addEventListener("dragleave", function() {
-          badge.classList.remove("over");
-        });
-
-        badge.addEventListener("drop", function(e) {
-          e.preventDefault();
-          badge.classList.remove("over");
-          if (draggedIdx === null || draggedIdx === idx) return;
-          var moved = roster.splice(draggedIdx, 1)[0];
-          roster.splice(idx, 0, moved);
-          draggedIdx = null;
-          renderRosterBadges();
-          renderGrid();
-        });
-
-        container.appendChild(badge);
       });
 
-      var absentListEl = document.getElementById("absentList");
-      if (absentListEl) {
-        absentListEl.innerHTML = "";
-        absentList.forEach(function(name, idx) {
-          var tag = document.createElement("div");
-          tag.className = "absent-tag";
-
-          var span = document.createElement("span");
-          span.innerText = name;
-          tag.appendChild(span);
-
-          var addBtn = document.createElement("button");
-          addBtn.className = "add-back-btn";
-          addBtn.innerText = "＋ Add to Bottom";
-          addBtn.onclick = function() { reinstatePlayer(idx); };
-          tag.appendChild(addBtn);
-
-          absentListEl.appendChild(tag);
-        });
+      const benchRow = document.getElementById("benchRow");
+      for (let i = 1; i <= 6; i++) {
+        const td = document.createElement("td");
+        td.className = `col-inn-${i}` + (i === 1 ? " col-active" : "");
+        td.id = `bench-inn-${i}`;
+        td.style.fontWeight = "bold";
+        td.style.fontSize = "0.8rem";
+        td.innerText = "None";
+        benchRow.appendChild(td);
       }
     }
 
-    function renderGrid() {
-      var thead = document.getElementById("gridHead");
-      var tbody = document.getElementById("gridBody");
-      if (!thead || !tbody) return;
-
-      thead.innerHTML = "";
-      tbody.innerHTML = "";
-
-      // Header row
-      var headTr = document.createElement("tr");
-      var thPos = document.createElement("th");
-      thPos.style.textAlign = "left";
-      thPos.innerText = "Position / Inning";
-      headTr.appendChild(thPos);
-
-      for (var inn = 1; inn <= INNINGS; inn++) {
-        var thInn = document.createElement("th");
-        var isCurrent = (inn === currentInning);
-        if (isCurrent) thInn.className = "current-inning-col";
-        thInn.innerHTML = isCurrent 
-          ? "Inning " + inn + '<br><small style="font-weight:normal; font-size:0.7rem; color:#dbeafe;">● CURRENT</small>' 
-          : "Inning " + inn;
-        headTr.appendChild(thInn);
-      }
-      thead.appendChild(headTr);
-
-      // Positions rows
-      POSITIONS.forEach(function(pos) {
-        var tr = document.createElement("tr");
-        
-        var tdLabel = document.createElement("td");
-        tdLabel.className = "pos-label";
-        var typeClass = pos.type === "IF" ? "type-if" : "type-of";
-        tdLabel.innerHTML = pos.label + '<span class="pos-type-tag ' + typeClass + '">' + pos.type + '</span>';
-        tr.appendChild(tdLabel);
-
-        for (var innIdx = 0; innIdx < INNINGS; innIdx++) {
-          var td = document.createElement("td");
-          if (innIdx + 1 === currentInning) {
-            td.className = "current-inning-col";
-          }
-
-          var select = document.createElement("select");
-          if (rotationState[innIdx][pos.key].manual) {
-            select.className = "manual-set";
-          }
-
-          var optDefault = document.createElement("option");
-          optDefault.value = "";
-          optDefault.innerText = "-- Open --";
-          select.appendChild(optDefault);
-
-          for (var r = 0; r < roster.length; r++) {
-            var player = roster[r];
-            var opt = document.createElement("option");
+    // 2. Populate Dropdowns & Bench Text
+    function refreshDropdownOptions() {
+      POSITIONS.forEach(p => {
+        for (let i = 0; i < 6; i++) {
+          const sel = document.querySelector(`select[data-pos="${p.key}"][data-inn="${i}"]`);
+          if (!sel) continue;
+          const currentVal = gridData[i][p.key].player;
+          
+          sel.innerHTML = `<option value="">-- Open --</option>`;
+          activeRoster.forEach(player => {
+            const opt = document.createElement("option");
             opt.value = player;
             opt.innerText = player;
-            if (rotationState[innIdx][pos.key].player === player) {
-              opt.selected = true;
-            }
-            select.appendChild(opt);
-          }
-
-          (function(iIndex, pKey) {
-            select.onchange = function(e) {
-              var val = e.target.value;
-              if (val === "") {
-                rotationState[iIndex][pKey] = { player: "", manual: false };
-              } else {
-                for (var k = 0; k < POSITIONS.length; k++) {
-                  var otherKey = POSITIONS[k].key;
-                  if (otherKey !== pKey && rotationState[iIndex][otherKey].player === val) {
-                    rotationState[iIndex][otherKey] = { player: "", manual: false };
-                  }
-                }
-                rotationState[iIndex][pKey] = { player: val, manual: true };
-              }
-              renderGrid();
-              updateAudit();
-            };
-          })(innIdx, pos.key);
-
-          td.appendChild(select);
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      });
-
-      // Bench row
-      var benchTr = document.createElement("tr");
-      benchTr.style.background = "#f8fafc";
-      var benchLabelTd = document.createElement("td");
-      benchLabelTd.className = "pos-label";
-      benchLabelTd.innerHTML = "<strong>Bench (Sitting)</strong>";
-      benchTr.appendChild(benchLabelTd);
-
-      for (var innIdx = 0; innIdx < INNINGS; innIdx++) {
-        var benchTd = document.createElement("td");
-        if (innIdx + 1 === currentInning) {
-          benchTd.className = "current-inning-col";
-        }
-
-        var assigned = [];
-        for (var k = 0; k < POSITIONS.length; k++) {
-          var pName = rotationState[innIdx][POSITIONS[k].key].player;
-          if (pName) assigned.push(pName);
-        }
-        var sitting = roster.filter(function(p) { return assigned.indexOf(p) === -1; });
-
-        benchTd.style.fontWeight = "bold";
-        benchTd.style.fontSize = "0.8rem";
-        benchTd.style.color = sitting.length > 0 ? "var(--warning-text)" : "var(--text-muted)";
-        benchTd.innerText = sitting.length > 0 ? sitting.join(", ") : "None";
-        benchTr.appendChild(benchTd);
-      }
-      tbody.appendChild(benchTr);
-    }
-
-    function updateAudit() {
-      var tbody = document.getElementById("auditBody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-
-      roster.forEach(function(player) {
-        var totalIF = 0;
-        var earlyIF = 0;
-        var totalBench = 0;
-        var posCounts = {};
-
-        for (var inn = 0; inn < INNINGS; inn++) {
-          var played = false;
-          for (var p = 0; p < POSITIONS.length; p++) {
-            var pos = POSITIONS[p];
-            if (rotationState[inn][pos.key].player === player) {
-              played = true;
-              posCounts[pos.key] = (posCounts[pos.key] || 0) + 1;
-              if (pos.type === "IF") {
-                totalIF++;
-                if (inn < 4) earlyIF++;
-              }
-            }
-          }
-          if (!played) totalBench++;
-        }
-
-        var violations = [];
-        if (totalIF < 3) violations.push("Need " + (3 - totalIF) + " more IF");
-        if (earlyIF < 2) violations.push("Need " + (2 - earlyIF) + " more IF (Inn 1-4)");
-        if (totalBench > 2) violations.push("Bench limit exceeded (" + totalBench + "/2)");
-        
-        var overused = [];
-        for (var pKey in posCounts) {
-          var posObj = POSITIONS.find(function(item) { return item.key === pKey; });
-          if (posObj && posObj.type === "IF" && posCounts[pKey] > 2) {
-            overused.push(pKey + ": " + posCounts[pKey] + "x");
-          }
-        }
-        if (overused.length > 0) {
-          violations.push("IF repeat limit: " + overused.join(", "));
-        }
-
-        var breakdownStr = [];
-        for (var k in posCounts) {
-          breakdownStr.push(k + ":" + posCounts[k]);
-        }
-
-        var tr = document.createElement("tr");
-        tr.innerHTML = 
-          "<td><strong>" + player + "</strong></td>" +
-          "<td>" + totalIF + " / 3 min</td>" +
-          "<td>" + earlyIF + " / 2 min</td>" +
-          "<td>" + totalBench + " / 2 max</td>" +
-          "<td>" + (breakdownStr.join(" ") || "-") + "</td>" +
-          "<td>" + 
-            (violations.length === 0 
-              ? '<span class="status-ok">Compliant</span>' 
-              : violations.map(function(v) { return '<span class="violation-pill">' + v + '</span>'; }).join("")) +
-          "</td>";
-        tbody.appendChild(tr);
-      });
-    }
-
-    function autoFillRemaining() {
-      if (roster.length < 7) {
-        alert("You need at least 7 active players to field a rotation.");
-        return;
-      }
-
-      var IF_KEYS = POSITIONS.filter(function(p) { return p.type === "IF"; }).map(function(p) { return p.key; });
-      var MAX_ATTEMPTS = 700;
-      var solved = false;
-      var bestState = null;
-
-      var activeFieldPositions = [...POSITIONS];
-      if (roster.length < 10) {
-        var dropCount = 10 - roster.length;
-        var droppableOF = ["RF", "LF", "RC", "LC"];
-        var dropped = droppableOF.slice(0, dropCount);
-        activeFieldPositions = POSITIONS.filter(function(p) { return dropped.indexOf(p.key) === -1; });
-      }
-
-      for (var attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-        var candidate = JSON.parse(JSON.stringify(rotationState));
-        var validAttempt = true;
-
-        var ifCounts = {};
-        var earlyIfCounts = {};
-        var posUsage = {};
-
-        for (var i = 0; i < roster.length; i++) {
-          var pl = roster[i];
-          ifCounts[pl] = 0;
-          earlyIfCounts[pl] = 0;
-          posUsage[pl] = {};
-          for (var k = 0; k < POSITIONS.length; k++) {
-            posUsage[pl][POSITIONS[k].key] = 0;
-          }
-        }
-
-        for (var inn = 0; inn < INNINGS; inn++) {
-          for (var p = 0; p < POSITIONS.length; p++) {
-            var player = candidate[inn][POSITIONS[p].key].player;
-            if (player && roster.indexOf(player) !== -1) {
-              posUsage[player][POSITIONS[p].key]++;
-              if (POSITIONS[p].type === "IF") {
-                ifCounts[player]++;
-                if (inn < 4) earlyIfCounts[player]++;
-              }
-            }
-          }
-        }
-
-        for (var inn = 0; inn < INNINGS; inn++) {
-          var assignedThisInn = [];
-          for (var k = 0; k < POSITIONS.length; k++) {
-            var name = candidate[inn][POSITIONS[k].key].player;
-            if (name && roster.indexOf(name) !== -1) assignedThisInn.push(name);
-          }
-
-          var openPositions = activeFieldPositions.filter(function(pos) {
-            return !candidate[inn][pos.key].player;
+            if (player === currentVal) opt.selected = true;
+            sel.appendChild(opt);
           });
-          
-          openPositions.sort(function(a, b) { return (a.type === "IF" ? -1 : 1); });
 
-          for (var o = 0; o < openPositions.length; o++) {
-            var pos = openPositions[o];
-            var eligible = roster.filter(function(cand) {
-              if (assignedThisInn.indexOf(cand) !== -1) return false;
-              if (pos.type === "IF" && posUsage[cand][pos.key] >= 2) return false;
-              return true;
-            });
-
-            if (eligible.length === 0) {
-              validAttempt = false;
-              break;
-            }
-
-            eligible.sort(function(a, b) {
-              if (pos.type === "IF") {
-                if (inn < 4) {
-                  var aNeedEarly = 2 - earlyIfCounts[a];
-                  var bNeedEarly = 2 - earlyIfCounts[b];
-                  if (aNeedEarly !== bNeedEarly) return bNeedEarly - aNeedEarly;
-                }
-                var aNeed = 3 - ifCounts[a];
-                var bNeed = 3 - ifCounts[b];
-                if (aNeed !== bNeed) return bNeed - aNeed;
-              } else {
-                var aExcess = ifCounts[a];
-                var bExcess = ifCounts[b];
-                if (aExcess !== bExcess) return bExcess - aExcess;
-              }
-              return Math.random() - 0.5;
-            });
-
-            var chosen = eligible[0];
-            candidate[inn][pos.key] = { player: chosen, manual: false };
-            assignedThisInn.push(chosen);
-            posUsage[chosen][pos.key]++;
-            if (pos.type === "IF") {
-              ifCounts[chosen]++;
-              if (inn < 4) earlyIfCounts[chosen]++;
-            }
-          }
-
-          if (!validAttempt) break;
-        }
-
-        if (validAttempt) {
-          var meetsAll = true;
-          for (var r = 0; r < roster.length; r++) {
-            var rPlayer = roster[r];
-            if (ifCounts[rPlayer] < 3 || earlyIfCounts[rPlayer] < 2) {
-              meetsAll = false;
-              break;
-            }
-            for (var ifIdx = 0; ifIdx < IF_KEYS.length; ifIdx++) {
-              if (posUsage[rPlayer][IF_KEYS[ifIdx]] > 2) {
-                meetsAll = false;
-                break;
-              }
-            }
-            if (!meetsAll) break;
-          }
-
-          if (meetsAll) {
-            bestState = candidate;
-            solved = true;
-            break;
+          if (gridData[i][p.key].manual && currentVal) {
+            sel.classList.add("manual-set");
+          } else {
+            sel.classList.remove("manual-set");
           }
         }
-      }
+      });
 
-      if (solved && bestState) {
-        rotationState = bestState;
-        renderGrid();
-        updateAudit();
-      } else {
-        alert("Could not satisfy all rotation constraints with the current pinned positions. Please clear a few manual selections and try again.");
+      // Update bench rows
+      for (let i = 0; i < 6; i++) {
+        const assigned = POSITIONS.map(p => gridData[i][p.key].player).filter(Boolean);
+        const sitting = activeRoster.filter(p => !assigned.includes(p));
+        const cell = document.getElementById(`bench-inn-${i + 1}`);
+        if (cell) {
+          cell.innerText = sitting.length ? sitting.join(", ") : "None";
+          cell.style.color = sitting.length ? "var(--warning-text)" : "var(--text-muted)";
+        }
       }
     }
 
-    function resetToManual() {
-      for (var inn = 0; inn < INNINGS; inn++) {
-        for (var p = 0; p < POSITIONS.length; p++) {
-          var k = POSITIONS[p].key;
-          if (!rotationState[inn][k].manual) {
-            rotationState[inn][k] = { player: "", manual: false };
+    function onUserManualSelect(innIdx, posKey, val) {
+      if (!val) {
+        gridData[innIdx][posKey] = { player: "", manual: false };
+      } else {
+        // Clear if player was placed elsewhere this inning
+        POSITIONS.forEach(p => {
+          if (p.key !== posKey && gridData[innIdx][p.key].player === val) {
+            gridData[innIdx][p.key] = { player: "", manual: false };
           }
-        }
-      }
-      renderGrid();
+        });
+        gridData[innIdx]
