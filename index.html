@@ -20,6 +20,8 @@
       --success-text: #166534;
       --warning-bg: #fef3c7;
       --warning-text: #92400e;
+      --highlight-bg: #eff6ff;
+      --highlight-border: #3b82f6;
     }
     * { box-sizing: border-box; }
     body {
@@ -40,7 +42,7 @@
       gap: 1rem;
     }
     h1 { margin: 0; font-size: 1.5rem; color: var(--primary); }
-    .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     button {
       background: var(--primary);
       color: #fff;
@@ -56,6 +58,12 @@
     button.secondary:hover { background: #475569; }
     button.danger { background: #ef4444; }
     button.danger:hover { background: #dc2626; }
+    button.nav-btn {
+      background: #0284c7;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+    }
+    button.nav-btn:hover { background: #0369a1; }
     .card {
       background: var(--card);
       border-radius: 8px;
@@ -64,10 +72,17 @@
       margin-bottom: 1.5rem;
       border: 1px solid var(--border);
     }
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
     .table-container {
       width: 100%;
       overflow-x: auto;
-      margin-top: 0.5rem;
     }
     table {
       width: 100%;
@@ -76,21 +91,62 @@
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 0.45rem 0.6rem;
+      padding: 0.5rem 0.6rem;
       text-align: center;
       white-space: nowrap;
     }
     th { background: #f1f5f9; font-weight: 600; }
+    .pos-label {
+      text-align: left;
+      font-weight: 700;
+      background: #f8fafc;
+      width: 160px;
+    }
+    .pos-type-tag {
+      font-size: 0.7rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-left: 6px;
+      font-weight: 600;
+    }
+    .type-if { background: #e0e7ff; color: #3730a3; }
+    .type-of { background: #fef3c7; color: #92400e; }
     select {
       width: 100%;
-      min-width: 105px;
-      padding: 0.3rem 0.2rem;
+      min-width: 110px;
+      padding: 0.35rem 0.3rem;
       border-radius: 4px;
       border: 1px solid var(--border);
       background: #fff;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
     .manual-set { background: #dbeafe; font-weight: 700; border-color: #2563eb; }
+    
+    /* Current Inning Highlight Styles */
+    th.current-inning-col {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      position: relative;
+    }
+    td.current-inning-col {
+      background: var(--highlight-bg);
+      border-left: 2px solid var(--highlight-border) !important;
+      border-right: 2px solid var(--highlight-border) !important;
+    }
+    td.current-inning-col select {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+    }
+    .inning-badge {
+      display: inline-block;
+      background: #1e3a8a;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .violation-pill {
       display: inline-block;
       padding: 0.2rem 0.5rem;
@@ -169,12 +225,15 @@
       font-weight: bold;
     }
     .add-back-btn:hover { background: #fee2e2; }
+
     @media print {
       body { background: white; padding: 0; }
       button, .no-print, .move-btn, .remove-btn, .add-back-btn { display: none !important; }
       .card { box-shadow: none; border: 1px solid #000; margin-bottom: 1rem; page-break-inside: avoid; }
       th, td { border: 1px solid #000; padding: 4px; }
       select { border: none; appearance: none; -webkit-appearance: none; font-weight: bold; }
+      th.current-inning-col { background: #e2e8f0 !important; color: #000 !important; }
+      td.current-inning-col { background: none; border: 1px solid #000 !important; }
     }
   </style>
 </head>
@@ -194,12 +253,8 @@
   </header>
 
   <div class="card no-print">
-    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-      <div>
-        <strong>Batting Order (<span id="activeCount">10</span> active):</strong>
-        <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(Drag badges or use arrows to adjust order; click ✕ if absent)</span>
-      </div>
-    </div>
+    <strong>Batting Order (<span id="activeCount">10</span> active):</strong>
+    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">(Drag badges or click arrows to reorder; click ✕ if absent)</span>
     <div id="rosterList" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
 
     <div id="absentContainer" style="margin-top: 1.25rem; border-top: 1px dashed var(--border); padding-top: 0.75rem; display: none;">
@@ -211,27 +266,23 @@
   </div>
 
   <div class="card">
-    <h3 style="margin: 0 0 0.25rem 0;">Fielding Grid</h3>
-    <small style="color: var(--text-muted); display: block; margin-bottom: 0.75rem;">Select any slot to lock a specific child into that position (highlighted in blue), then click Auto-Fill.</small>
+    <div class="card-header-row">
+      <div>
+        <h3 style="margin: 0; display: inline-block; vertical-align: middle;">Fielding Rotation Grid</h3>
+        <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.5rem;">Positions vertically, Innings horizontally</span>
+      </div>
+      <div class="btn-group no-print">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-right: 0.25rem;">Live Tracker:</span>
+        <button class="nav-btn" onclick="stepInning(-1)">◀ Prev Inning</button>
+        <span id="currentInningIndicator" class="inning-badge">Inning 1</span>
+        <button class="nav-btn" onclick="stepInning(1)">Next Inning ▶</button>
+      </div>
+    </div>
+
     <div class="table-container">
       <table id="rotationTable">
-        <thead>
-          <tr>
-            <th>Inning</th>
-            <th>Pitcher (P)</th>
-            <th>Catcher (C)</th>
-            <th>1st Base (1B)</th>
-            <th>2nd Base (2B)</th>
-            <th>3rd Base (3B)</th>
-            <th>Shortstop (SS)</th>
-            <th>Left Field (LF)</th>
-            <th>Left Center (LC)</th>
-            <th>Right Center (RC)</th>
-            <th>Right Field (RF)</th>
-            <th>Bench (Sit)</th>
-          </tr>
-        </thead>
-        <tbody id="rotationBody"></tbody>
+        <thead id="gridHead"></thead>
+        <tbody id="gridBody"></tbody>
       </table>
     </div>
   </div>
@@ -276,6 +327,7 @@
     ];
 
     var INNINGS = 6;
+    var currentInning = 1; // 1 to 6
     var rotationState = [];
 
     function init() {
@@ -292,11 +344,19 @@
       updateAudit();
     }
 
+    function stepInning(dir) {
+      var next = currentInning + dir;
+      if (next < 1) next = 1;
+      if (next > INNINGS) next = INNINGS;
+      currentInning = next;
+      document.getElementById("currentInningIndicator").innerText = "Inning " + currentInning;
+      renderGrid();
+    }
+
     function removePlayer(idx) {
       var removed = roster.splice(idx, 1)[0];
       absentList.push(removed);
 
-      // Scrub removed player from any grid assignments
       for (var i = 0; i < INNINGS; i++) {
         for (var p = 0; p < POSITIONS.length; p++) {
           var k = POSITIONS[p].key;
@@ -312,10 +372,8 @@
     }
 
     function reinstatePlayer(idx) {
-      // Late arrivals go to bottom of the batting order
       var added = absentList.splice(idx, 1)[0];
       roster.push(added);
-
       renderRosterBadges();
       renderGrid();
       updateAudit();
@@ -346,7 +404,6 @@
         absentBox.style.display = absentList.length > 0 ? "block" : "none";
       }
 
-      // Render Active Roster
       roster.forEach(function(name, idx) {
         var badge = document.createElement("div");
         badge.className = "roster-tag";
@@ -400,7 +457,6 @@
         container.appendChild(badge);
       });
 
-      // Render Absent Roster
       var absentListEl = document.getElementById("absentList");
       if (absentListEl) {
         absentListEl.innerHTML = "";
@@ -415,24 +471,51 @@
       }
     }
 
+    // --- Vertical Positions, Horizontal Innings Grid ---
     function renderGrid() {
-      var tbody = document.getElementById("rotationBody");
-      if (!tbody) return;
+      var thead = document.getElementById("gridHead");
+      var tbody = document.getElementById("gridBody");
+      if (!thead || !tbody) return;
+
+      thead.innerHTML = "";
       tbody.innerHTML = "";
 
-      for (var inn = 0; inn < INNINGS; inn++) {
+      // 1. Header Row: "Position" + Innings 1 through 6
+      var headTr = document.createElement("tr");
+      var thPos = document.createElement("th");
+      thPos.style.textAlign = "left";
+      thPos.innerText = "Position / Inning";
+      headTr.appendChild(thPos);
+
+      for (var inn = 1; inn <= INNINGS; inn++) {
+        var thInn = document.createElement("th");
+        var isCurrent = (inn === currentInning);
+        if (isCurrent) thInn.className = "current-inning-col";
+        thInn.innerHTML = isCurrent 
+          ? "Inning " + inn + '<br><small style="font-weight:normal; font-size:0.7rem; color:#dbeafe;">● CURRENT</small>' 
+          : "Inning " + inn;
+        headTr.appendChild(thInn);
+      }
+      thead.appendChild(headTr);
+
+      // 2. Position Rows (10 rows for positions)
+      POSITIONS.forEach(function(pos) {
         var tr = document.createElement("tr");
         
-        var tdInn = document.createElement("td");
-        tdInn.innerHTML = "<strong>Inning " + (inn + 1) + "</strong>";
-        tr.appendChild(tdInn);
+        var tdLabel = document.createElement("td");
+        tdLabel.className = "pos-label";
+        var typeClass = pos.type === "IF" ? "type-if" : "type-of";
+        tdLabel.innerHTML = pos.label + '<span class="pos-type-tag ' + typeClass + '">' + pos.type + '</span>';
+        tr.appendChild(tdLabel);
 
-        for (var p = 0; p < POSITIONS.length; p++) {
-          var pos = POSITIONS[p];
+        for (var innIdx = 0; innIdx < INNINGS; innIdx++) {
           var td = document.createElement("td");
+          if (innIdx + 1 === currentInning) {
+            td.className = "current-inning-col";
+          }
+
           var select = document.createElement("select");
-          
-          if (rotationState[inn][pos.key].manual) {
+          if (rotationState[innIdx][pos.key].manual) {
             select.className = "manual-set";
           }
 
@@ -446,50 +529,65 @@
             var opt = document.createElement("option");
             opt.value = player;
             opt.innerText = player;
-            if (rotationState[inn][pos.key].player === player) {
+            if (rotationState[innIdx][pos.key].player === player) {
               opt.selected = true;
             }
             select.appendChild(opt);
           }
 
-          (function(currentInn, currentPosKey) {
+          (function(iIndex, pKey) {
             select.onchange = function(e) {
               var val = e.target.value;
               if (val === "") {
-                rotationState[currentInn][currentPosKey] = { player: "", manual: false };
+                rotationState[iIndex][pKey] = { player: "", manual: false };
               } else {
                 for (var k = 0; k < POSITIONS.length; k++) {
                   var otherKey = POSITIONS[k].key;
-                  if (otherKey !== currentPosKey && rotationState[currentInn][otherKey].player === val) {
-                    rotationState[currentInn][otherKey] = { player: "", manual: false };
+                  if (otherKey !== pKey && rotationState[iIndex][otherKey].player === val) {
+                    rotationState[iIndex][otherKey] = { player: "", manual: false };
                   }
                 }
-                rotationState[currentInn][currentPosKey] = { player: val, manual: true };
+                rotationState[iIndex][pKey] = { player: val, manual: true };
               }
               renderGrid();
               updateAudit();
             };
-          })(inn, pos.key);
+          })(innIdx, pos.key);
 
           td.appendChild(select);
           tr.appendChild(td);
         }
-
-        var assignedThisInn = [];
-        for (var k = 0; k < POSITIONS.length; k++) {
-          var pName = rotationState[inn][POSITIONS[k].key].player;
-          if (pName) assignedThisInn.push(pName);
-        }
-        var benchPlayers = roster.filter(function(p) { return assignedThisInn.indexOf(p) === -1; });
-
-        var tdBench = document.createElement("td");
-        tdBench.style.fontWeight = "bold";
-        tdBench.style.color = benchPlayers.length > 0 ? "var(--warning-text)" : "var(--text-muted)";
-        tdBench.innerText = benchPlayers.length > 0 ? benchPlayers.join(", ") : "None";
-        tr.appendChild(tdBench);
-
         tbody.appendChild(tr);
+      });
+
+      // 3. Bench Row (bottom row showing sitting players for each inning)
+      var benchTr = document.createElement("tr");
+      benchTr.style.background = "#f8fafc";
+      var benchLabelTd = document.createElement("td");
+      benchLabelTd.className = "pos-label";
+      benchLabelTd.innerHTML = "<strong>Bench (Sitting)</strong>";
+      benchTr.appendChild(benchLabelTd);
+
+      for (var innIdx = 0; innIdx < INNINGS; innIdx++) {
+        var benchTd = document.createElement("td");
+        if (innIdx + 1 === currentInning) {
+          benchTd.className = "current-inning-col";
+        }
+
+        var assigned = [];
+        for (var k = 0; k < POSITIONS.length; k++) {
+          var pName = rotationState[innIdx][POSITIONS[k].key].player;
+          if (pName) assigned.push(pName);
+        }
+        var sitting = roster.filter(function(p) { return assigned.indexOf(p) === -1; });
+
+        benchTd.style.fontWeight = "bold";
+        benchTd.style.fontSize = "0.8rem";
+        benchTd.style.color = sitting.length > 0 ? "var(--warning-text)" : "var(--text-muted)";
+        benchTd.innerText = sitting.length > 0 ? sitting.join(", ") : "None";
+        benchTr.appendChild(benchTd);
       }
+      tbody.appendChild(benchTr);
     }
 
     function updateAudit() {
@@ -567,8 +665,6 @@
       var solved = false;
       var bestState = null;
 
-      // Active field positions needed based on active roster size
-      // (Prioritize Infield + Catcher if >= 9, drop extra outfielders if short)
       var activeFieldPositions = [...POSITIONS];
       if (roster.length < 10) {
         var dropCount = 10 - roster.length;
